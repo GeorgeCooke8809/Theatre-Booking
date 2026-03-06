@@ -20,10 +20,13 @@ class Backend:
                     "Database=TheatreBooking;"
                     "Trusted_Connection=yes;"
                 )
-        else:
+        elif self.database == "COLLEGE":
             logging.debug("Connecting to college database...")
             logging.critical("College database has not yet been implemented!")
             raise Exception("College database has not yet been implemented.")
+        else:
+            logging.critical("Invalid database given.")
+            raise Exception("Invalid database given.")
          
         logging.debug("Connected to database")
 
@@ -40,10 +43,15 @@ class Backend:
         if table not in tables:
             raise Exception("Invalid table entered")
 
-        ids = ["userID", "bookingID", "bookingSeatID", "performanceID", "performanceUnavailableSeatID", "showingID"]
+        strings = ["SELECT userID FROM dbo.Users ORDER BY userID DESC",
+                   "SELECT bookingID FROM dbo.Bookings ORDER BY bookingID DESC",
+                   "SELECT bookingSeatID FROM dbo.BookingSeats ORDER BY bookingSeatID DESC",
+                   "SELECT performanceID FROM dbo.Performances ORDER BY performanceID DESC",
+                   "SELECT performanceUnavailableSeatID FROM dbo.PerformanceUnavailableSeats ORDER BY performanceUnavailableSeatID DESC",
+                   "SELECT ShowingID FROM dbo.Showings ORDER BY ShowingID DESC"]
 
-        id_index = tables.index(tables)
-        select = ids[id_index]
+        id_index = tables.index(table)
+        select_string = strings[id_index]
 
         table = f"dbo.{table}"
 
@@ -51,7 +59,7 @@ class Backend:
             if connection is not None:
                 cursor = connection.cursor()
 
-                cursor.execute("SELECT ? FROM ? ORDER BY userID DESC", (select, table))
+                cursor.execute(select_string)
 
                 past_ID = cursor.fetchone()
                 logging.debug(f"{past_ID = }")
@@ -60,6 +68,8 @@ class Backend:
                     new_ID = int(past_ID[0]) + 1
                 else:
                     new_ID = 1
+
+                logging.debug(f"{new_ID = }")
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
@@ -79,7 +89,22 @@ class Backend:
         Returns true if is in database (cannot be accepted)
         """
         #TODO: Implement - check_email_in_database
-        pass
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM dbo.Users WHERE email = ?", (email))
+                users = cursor.fetchall()
+
+                logging.debug(f"{users = }")
+
+                if len(users) == 0:
+                    return False
+                else:
+                    return True
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def create_user(self, first_name: str, last_name: str, email: str, phone: str, password: str) -> None:
         """
