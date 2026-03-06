@@ -23,7 +23,7 @@ class Backend:
         else:
             logging.debug("Connecting to college database")
             logging.critical("College database has not yet been implemented!")
-            raise ImportError("College database has not yet been implemented.")
+            raise Exception("College database has not yet been implemented.")
          
         logging.debug("Connected to database")
 
