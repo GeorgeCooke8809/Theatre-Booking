@@ -12,7 +12,7 @@ class Backend:
         """
 
         if self.database == "PERSONAL":
-            logging.debug("Connecting to personal (local) database")
+            logging.debug("Connecting to personal (local) database...")
 
             cs = (
                     "Driver={ODBC Driver 18 for SQL Server};"
@@ -21,7 +21,7 @@ class Backend:
                     "Trusted_Connection=yes;"
                 )
         else:
-            logging.debug("Connecting to college database")
+            logging.debug("Connecting to college database...")
             logging.critical("College database has not yet been implemented!")
             raise Exception("College database has not yet been implemented.")
          
@@ -34,7 +34,37 @@ class Backend:
         An internal function to get the next available primary key in one of the SQL tables
         """
         #TODO: Implement - _get_next_ID
-        pass
+
+        tables = ["Users", "Bookings", "BookingSeats", "Performances", "PerformanceUnavailableSeats", "Showings"]
+
+        if table not in tables:
+            raise Exception("Invalid table entered")
+
+        ids = ["userID", "bookingID", "bookingSeatID", "performanceID", "performanceUnavailableSeatID", "showingID"]
+
+        id_index = tables.index(tables)
+        select = ids[id_index]
+
+        table = f"dbo.{table}"
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT ? FROM ? ORDER BY userID DESC", (select, table))
+
+                past_ID = cursor.fetchone()
+                logging.debug(f"{past_ID = }")
+
+                if past_ID != None:
+                    new_ID = int(past_ID[0]) + 1
+                else:
+                    new_ID = 1
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+
+        return new_ID
 
     def check_password(self, email: str, password_attempt: str) -> bool:
         """
