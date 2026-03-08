@@ -78,8 +78,23 @@ class Backend:
         """
         Checks if the entered password is correct for the email
         """
-        #TODO: Implement - check_password
-        pass
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT password FROM dbo.Users WHERE email = ?", (email))
+                correct_password = cursor.fetchone()
+
+                if correct_password == None: # Email not in database
+                    return False
+
+                if correct_password[0] == password_attempt:
+                    return True
+                else: # Incorrect password
+                    return False
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def check_email_in_database(self, email: str) -> bool:
         """
@@ -108,7 +123,6 @@ class Backend:
         """
         Creates a new user
         """
-        #TODO: Implement - create_user
         if self.check_email_in_database(email):
             logging.critical("Email is already in email, not inserting!")
             raise Exception("Email is already in database, not inserting.")

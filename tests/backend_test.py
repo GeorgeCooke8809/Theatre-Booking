@@ -100,3 +100,26 @@ class TestBackend():
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_email_in_database("ksdhdglwuvg@gmail.com") == False
+
+    def test_check_password_correct(self):
+        self._clear_databases()
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123*") == True
+
+    def test_check_password_incorrect(self):
+        self._clear_databases()
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123") == False
+
+    def test_check_password_empty_database(self):
+        self._clear_databases()
+
+        assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123") == False
+
+    def test_check_password_no_email(self):
+        self._clear_databases()
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_password(email="25cookeg89@collyers.ac.uk", password_attempt="SuperPassword123") == False
