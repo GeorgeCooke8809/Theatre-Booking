@@ -408,6 +408,25 @@ class TestGetBookingPrice(Test):
 
     def test_get_booking_price_invalid_performanceID(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
-        
+
         with pytest.raises(Exception):
             assert self.backend.get_booking_price(userID=1, performanceID=1, no_child_seats=5, no_adult_seats=5, no_elderly_seats=5) == "£100.00"
+
+class TestCheckSeatIDValid(Test):
+    def test_check_seat_ID_valid_valid(self):
+        assert self.backend._check_valid_seat_ID("1D") == True
+
+    def test_check_seat_ID_valid_boundary(self):
+        assert self.backend._check_valid_seat_ID("10T") == True
+
+    def test_check_seat_ID_valid_number_invalid(self):
+        assert self.backend._check_valid_seat_ID("11B") == False
+
+    def test_check_seat_ID_valid_letter_invalid(self):
+        assert self.backend._check_valid_seat_ID("5U") == False
+
+    def test_check_seat_ID_valid_number_not_numeric(self):
+        assert self.backend._check_valid_seat_ID("5CU") == False
+
+    def test_check_seat_ID_valid_letter_is_number(self):
+        assert self.backend._check_valid_seat_ID("91") == False

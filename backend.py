@@ -160,8 +160,21 @@ class Backend:
         Returns true if valid, false if not.
         Used in the mark_seat_unavailable and book_seat functions
         """
-        # TODO: Implement _check_valid_seat_ID
-        pass
+        logging.debug(f"Checking seatID {seatID} is valid...")
+
+        seat_letter = seatID[-1]
+        seat_number = seatID[0:-1]
+
+        if seat_letter not in list("ABCDEFGHIJKLMNOPQRST"):
+            return False
+        
+        if seat_number.isnumeric() == False:
+            return False
+        
+        if int(seat_number) > 10:
+            return False
+        
+        return True
 
     def mark_seat_unavailable(self, seatID: str, performanceID: str) -> None:
         """
@@ -176,6 +189,12 @@ class Backend:
         """
         #TODO: Implement - get_unavailable_seats
         pass
+
+    def _check_seat_available(self, seatID: str) -> bool:
+        """
+        Checks if a seat is available.
+        Used in the book_seat function
+        """
 
     def book_seat(self, seatID: str, showingID: int, seat_type: str) -> None:
         """
@@ -209,7 +228,7 @@ class Backend:
                     return "£0.00"
                 
                 logging.debug("Getting prices...")
-                cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?" (performanceID))
+                cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (performanceID))
                 prices = cursor.fetchone()
 
                 price = (prices[0] * no_child_seats) + (prices[1] * no_adult_seats) + (prices[2] * no_elderly_seats)
@@ -335,9 +354,54 @@ class Backend:
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, list[str]]]:
         """
         Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, showing attendees (names): list)]
+        The showing attendees will be made up of the following tuples [(userID, user first name, user last name, user phone)] and will be sorted by ascending surname alphabetically
         """
         #TODO: Implement - admin_get_showings
-        pass
+        #TODO: Test
+        if self._check_performance_exists(performanceID) == False:
+            logging.critical("PerformanceID does not exist.")
+            raise Exception("PerformanceID does not exist.")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug(f"Getting showings for {performanceID}...")
+                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ? ORDER BY showingDate ACS", (performanceID))
+                showings_result = cursor.fetchall()
+
+                showings = []
+
+                for showing in showings_result:
+                    showingID = showing[0]
+                    showing_date = showing[1]
+                    showing_date = showing_date.strftime("%A %d %B, %Y")
+
+                    cursor.execute("SELECT userID FROM dbo.Bookings WHERE showingID = ?", (showingID))
+                    users_result = cursor.fetchall()
+
+                    attendees = []
+
+                    for user in users_result:
+                        userID = user[0]
+                        
+                        cursor.execute("SELECT fName, lName, phone FROM dbo.Users WHERE userID = ?", (userID))
+                        user_details = cursor.fetchone()[0]
+
+                        user_first_name = user_details[0]
+                        user_last_name = user_details[1]
+                        user_phone = user_details[2]
+
+                        attendees.append((userID, user_first_name, user_last_name, user_phone))
+
+                    attendees.sort(key=lambda x:x[2])
+
+                    showings.append((showingID, showing_date, attendees))
+
+                return showings
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_all_users(self) -> list[tuple[int, str, str, str, str]]:
         """
