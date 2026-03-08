@@ -267,3 +267,17 @@ class TestAddShowing(Test):
 
         with pytest.raises(Exception):
             self.backend.add_showing(performanceID, "2026/03/09")
+
+class TestGetAllUsers(Test):
+    def test_get_all_users(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.create_user("Olly", "Kitson", "ollynortheykitson@icloud.com", "07802 447089", "SuperPassword1234*")
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword12345*")
+
+        users = self.backend.get_all_users()
+
+        assert len(users) == 3
+        assert type(users) == list
+        assert type(users[0]) == tuple
+
+        assert users[0] == (1, "George", "Cooke", "07802 447089", "VISITOR")

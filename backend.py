@@ -297,10 +297,22 @@ class Backend:
 
     def get_all_users(self) -> list[tuple[int, str, str, str, str]]:
         """
-        Gets and returns a list of all users (sorted alphabetically by surname) in the following format [(userID: int, first name: str, last name: str, phone: str, type: str)]
+        Gets and returns a list of all users (sorted alphabetically by surname) in the following format [(userID: int, first name: str, last name: str, phone: str, userType: str)]
         """
-        #TODO: Implement - get_all_users
-        pass
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting users...")
+                cursor.execute("SELECT userID, fName, lName, phone, userType FROM dbo.Users")
+                users = cursor.fetchall()
+
+                users = [tuple(row) for row in users]
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return users
 
     def change_user_type(self, userID: int, new_type: str) -> None:
         """
