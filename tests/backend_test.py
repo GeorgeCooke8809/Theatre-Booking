@@ -353,3 +353,25 @@ class TestDeleteUser(Test):
     def test_delete_user_invalid(self):
         with pytest.raises(Exception):
             self.backend.delete_user(1)
+
+class TestCheckUserAdmin(Test):
+    def test_check_user_admin_true_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.change_user_type(1, "ADMIN")
+
+        assert self.backend.check_user_admin(1) == True
+
+    def test_check_user_admin_visitor_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_user_admin(1) == False
+
+    def test_check_user_admin_special_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.change_user_type(1, "SPECIAL")
+
+        assert self.backend.check_user_admin(1) == False
+
+    def test_check_user_admin_invalid_user(self):
+        with pytest.raises(Exception):
+            self.backend.check_user_admin(1)

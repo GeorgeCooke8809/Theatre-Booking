@@ -380,8 +380,25 @@ class Backend:
         """
         Checks if the user is an admin and returns true if they are. To be used for sending to the relevant portal
         """
-        #TODO: Implement - check_user_admin
-        pass
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist, cannot check user admin status.")
+            raise Exception("User does not exist, cannot check user admin status.")
+        
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug(f"Checking user {userID} for admin privileges...")
+                cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (userID))
+                user_type = cursor.fetchone()[0]
+
+                if user_type == "ADMIN":
+                    return True
+                else:
+                    return False
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
