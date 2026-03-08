@@ -316,7 +316,7 @@ class Backend:
     
     def _check_user_exists(self, userID: int) -> bool:
         """
-        Used in the validation of change_user_type to check that the user exists.
+        Used in the validation of change_user_type and delete_user to check that the user exists.
         Returns true if the user exists, false if they do not.
         """
         with self._connection() as connection:
@@ -362,7 +362,19 @@ class Backend:
         Deletes the provided user
         """
         #TODO: Implement - delete_user
-        pass
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist, cannot delete user.")
+            raise Exception("User does not exist, cannot delete user.")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug(f"Deleting user {userID}...")
+                cursor.execute("DELETE FROM dbo.Users WHERE userID =?", (userID))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def check_user_admin(self, userID: int) -> bool:
         """

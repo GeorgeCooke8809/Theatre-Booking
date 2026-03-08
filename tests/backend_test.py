@@ -341,3 +341,15 @@ class TestChangeUserType(Test):
     def test_change_user_type_invalid_ID(self):
         with pytest.raises(Exception):
             self.backend.change_user_type(1, "ADMIN")
+
+class TestDeleteUser(Test):
+    def test_delete_user_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.delete_user(1)
+
+        assert len(self.backend.get_all_users()) == 0
+
+    def test_delete_user_invalid(self):
+        with pytest.raises(Exception):
+            self.backend.delete_user(1)
