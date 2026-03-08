@@ -4,9 +4,12 @@ import logging
 
 from backend import Backend
 
-class Test:
+class Test: # parent class to all test classes with regularly repeated code
     @pytest.fixture(autouse = True)
     def create_backend(self):
+        """
+        Code ran before every test to create backend connection and clear tables
+        """
         self.backend = Backend("PERSONAL")
         self._clear_databases()
 
@@ -233,3 +236,17 @@ class TestAddPerformance(Test):
             assert float(values[0]) == 7.6
             assert float(values[1]) == 15
             assert float(values[2]) == 2.5
+
+class TestPerformanceExists(Test):
+    def test_performance_exists_with_valid(self):
+        performanceID = self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+
+        assert self.backend._check_performance_exists(performanceID) == True
+
+    def test_performance_exists_with_invalid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+
+        assert self.backend._check_performance_exists(66) == False

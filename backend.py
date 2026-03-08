@@ -138,9 +138,10 @@ class Backend:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
 
-    def get_all_performances(self, date_from: datetime.date = datetime.date.today()) -> list[str]:
+    def get_all_performances(self, date_from: datetime.date = datetime.date.today()) -> list[tuple[int, str]]:
         """
-        Gets and returns a list of all performances from and including the date provided sorted by ascending date
+        Gets and returns a list of all performances from and including the date provided sorted by ascending date.
+        Returns in the format [(performanceID, performance title)]
         """
         #TODO: Implement - get_all_performances
         pass
@@ -167,7 +168,7 @@ class Backend:
         #TODO: Implement - book_seat
         pass
 
-    def get_booking_price(self, userID: int, performanceID: int, child_seats: int, adult_seats: int, elderly_seats: int) -> float:
+    def get_booking_price(self, userID: int, performanceID: int, no_child_seats: int, no_adult_seats: int, no_elderly_seats: int) -> float:
         """
         Calculates the price for a potential booking based on specified values, userID is used to check if user is special guest
         """
@@ -233,20 +234,53 @@ class Backend:
             if connection is not None:
                 cursor = connection.cursor()
 
-                logging.debug("Adding new performance")
+                logging.debug("Adding new performance...")
                 cursor.execute("INSERT INTO dbo.Performances VALUES(?, ?, ?, ?, ?, ?)", (next_id, title, description, child_price, adult_price, elderly_price))
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
             
         return next_id
+    
+    def _check_performance_exists(self, performanceID) -> bool:
+        """
+        Validation for checking a performance exists before pushing to it.
+        """
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM dbo.Performances WHERE performanceID = ?", (performanceID))
+                performance = cursor.fetchone()
+
+                if performance == None:
+                    return False
+                else:
+                    return True
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def add_showing(self, performanceID: int, date: datetime.date = datetime.date.today()) -> None:
         """
         Adds a new showing to for the performance with the given performanceID on the specified date
         """
         #TODO: Implement - add_showing
-        pass
+        if type(date) != datetime.date:
+            logging.critical(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
+            raise Exception(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
+
+        with self._connection() as connection:
+            next_id = self._get_next_ID(table="Showings")
+
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Creating new showing...")
+                cursor.execute("INSERT INTO dbo.Showings VALUES(?, ?, ?)", (next_id, performanceID, date))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, list[str]]]:
         """
