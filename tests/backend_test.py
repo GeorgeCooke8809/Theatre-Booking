@@ -4,7 +4,7 @@ import logging
 
 from backend import Backend
 
-class TestBackend():
+class Test:
     @pytest.fixture(autouse = True)
     def create_backend(self):
         self.backend = Backend("PERSONAL")
@@ -45,9 +45,11 @@ class TestBackend():
             for command in tables:
                 cursor.execute(command)
 
+class TestConnect(Test):
     def test_connect_default(self):
         assert type(self.backend._connection()) == pyodbc.Connection
 
+class TestGetNextID(Test):
     def test_get_next_id_users(self):
         assert type(self.backend._get_next_ID("Users")) == int
 
@@ -66,6 +68,7 @@ class TestBackend():
     def test_get_next_id_showings(self):
         assert type(self.backend._get_next_ID("Showings")) == int
 
+class TestAddUser(Test):
     def test_add_user_valid_data(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
@@ -78,12 +81,13 @@ class TestBackend():
 
         assert self.backend._get_next_ID("Users") == 4
 
-    def test_add_same_email(self):
+    def test_add_user_same_email(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         with pytest.raises(Exception):
             self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
+class TestEmailInDatabase(Test):
     def test_email_in_database_with_email_in_database(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
@@ -94,6 +98,7 @@ class TestBackend():
 
         assert self.backend.check_email_in_database("ksdhdglwuvg@gmail.com") == False
 
+class TestCheckPassword(Test):
     def test_check_password_correct(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
@@ -112,6 +117,7 @@ class TestBackend():
 
         assert self.backend.check_password(email="25cookeg89@collyers.ac.uk", password_attempt="SuperPassword123") == False
 
+class TestAddPerformance(Test):
     def test_add_performance_valid(self):
         assert self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0) == 1
         assert self.backend._get_next_ID("Performances") == 2

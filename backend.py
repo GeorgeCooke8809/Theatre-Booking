@@ -280,6 +280,8 @@ class Backend:
         """
         Checks if the user is an admin and returns true if they are. To be used for sending to the relevant portal
         """
+        #TODO: Implement - check_user_admin
+        pass
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
