@@ -276,6 +276,11 @@ class Backend:
         #TODO: Implement - delete_user
         pass
 
+    def check_user_admin(self, userID: int) -> bool:
+        """
+        Checks if the user is an admin and returns true if they are. To be used for sending to the relevant portal
+        """
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")
