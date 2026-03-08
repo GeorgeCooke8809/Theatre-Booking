@@ -1,58 +1,102 @@
 import pyodbc
-import logging
 import pytest
+import logging
 
 from backend import Backend
 
-logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
-                        format="%(asctime)s - %(levelname)s - %(message)s")
-
 class TestBackend():
+    @pytest.fixture(autouse = True)
+    def create_backend(self):
+        self.backend = Backend("PERSONAL")
+
+    def _connection(self):
+        """
+        An internal function used for the context manager to connect to the database.
+        """
+        logging.debug("Connecting to personal (local) database...")
+
+        cs = (
+                "Driver={ODBC Driver 18 for SQL Server};"
+                "Server=(localdb)\\TheatreBooking;"
+                "Database=TheatreBooking;"
+                "Trusted_Connection=yes;"
+            )
+
+        logging.debug("Connected to database")
+
+        return pyodbc.connect(cs)
+    
+    def _clear_databases(self):
+        """
+        An internal testing function used to clear all of the tables.
+        """
+        tables = ["TRUNCATE TABLE dbo.Users;",
+                "TRUNCATE TABLE dbo.Bookings;",
+                "TRUNCATE TABLE dbo.BookingSeats;",
+                "TRUNCATE TABLE dbo.Performances;",
+                "TRUNCATE TABLE dbo.PerformanceUnavailableSeats;",
+                "TRUNCATE TABLE dbo.Showings;",
+                ]
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            for command in tables:
+                cursor.execute(command)
+
     def test_connect_default(self):
-        backend = Backend()
-        assert type(backend._connection()) == pyodbc.Connection
-
-    def test_connect_college(self):
-        backend = Backend("COLLEGE")
-        assert type(backend._connection()) == pyodbc.Connection
-
-    def test_connect_personal(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._connection()) == pyodbc.Connection
-
-    def test_get_next_id_invalid_table(self):
-        backend = Backend("PERSONAL")
-        with pytest.raises(Exception):
-            backend._get_next_ID("HHHH")
+        assert type(self.backend._connection()) == pyodbc.Connection
 
     def test_get_next_id_users(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("Users")) == int
+        assert type(self.backend._get_next_ID("Users")) == int
 
     def test_get_next_id_bookings(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("Users")) == int
+        assert type(self.backend._get_next_ID("Users")) == int
 
     def test_get_next_id_booking_seats(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("BookingSeats")) == int
+        assert type(self.backend._get_next_ID("BookingSeats")) == int
 
     def test_get_next_id_performances(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("Performances")) == int
+        assert type(self.backend._get_next_ID("Performances")) == int
 
     def test_get_next_id_performance_unavailable_seats(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("PerformanceUnavailableSeats")) == int
+        assert type(self.backend._get_next_ID("PerformanceUnavailableSeats")) == int
 
     def test_get_next_id_showings(self):
-        backend = Backend("PERSONAL")
-        assert type(backend._get_next_ID("Showings")) == int
+        assert type(self.backend._get_next_ID("Showings")) == int
+
+    def test_add_user_valid_data(self):
+        self._clear_databases()
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend._get_next_ID("Users") == 2
+
+    def test_add_multiple_users(self):
+        self._clear_databases()
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.create_user("Olly", "Kitson", "ollynortheykitson@icloud.com", "07802 447089", "SuperPassword1234*")
+        self.backend.create_user("Akil", "rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword12345*")
+
+        assert self.backend._get_next_ID("Users") == 4
+
+    def test_add_same_email(self): # should fail
+        self._clear_databases()
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
     def test_email_in_database_with_email_in_database(self):
-        backend = Backend("PERSONAL")
-        assert backend.check_email_in_database("25cookeg899@collyers.ac.uk") == True
+        self._clear_databases()
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_email_in_database("25cookeg899@collyers.ac.uk") == True
 
     def test_email_in_database_with_email_not_in_database(self):
-        backend = Backend("PERSONAL")
-        assert backend.check_email_in_database("ksdhdglwuvg@gmail.com") == False
+        self._clear_databases()
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend.check_email_in_database("ksdhdglwuvg@gmail.com") == False

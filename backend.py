@@ -36,8 +36,6 @@ class Backend:
         """
         An internal function to get the next available primary key in one of the SQL tables
         """
-        #TODO: Implement - _get_next_ID
-
         tables = ["Users", "Bookings", "BookingSeats", "Performances", "PerformanceUnavailableSeats", "Showings"]
 
         if table not in tables:
@@ -88,7 +86,6 @@ class Backend:
         Checks if the provided email is already in use.
         Returns true if is in database (cannot be accepted)
         """
-        #TODO: Implement - check_email_in_database
         with self._connection() as connection:
             if connection is not None:
                 cursor = connection.cursor()
@@ -97,6 +94,7 @@ class Backend:
                 users = cursor.fetchall()
 
                 logging.debug(f"{users = }")
+                logging.debug(f"{len(users) = }")
 
                 if len(users) == 0:
                     return False
@@ -111,7 +109,20 @@ class Backend:
         Creates a new user
         """
         #TODO: Implement - create_user
-        pass
+        if self.check_email_in_database(email):
+            logging.critical("Email is already in email, not inserting!")
+            raise Exception("Email is already in database, not inserting.")
+
+        with self._connection() as connection:
+            next_id = self._get_next_ID(table="Users")
+
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("INSERT INTO dbo.Users VALUES(?, ?, ?, ?, ?, ?, ?)", (next_id, first_name, last_name, email, password, phone, "VISITOR"))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_all_performances(self, date_from: datetime.date = datetime.date.today()) -> list[str]:
         """

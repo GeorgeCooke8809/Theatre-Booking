@@ -1,36 +1,127 @@
-DEBUG    root:backend.py:24 Connecting to college database...
-CRITICAL root:backend.py:25 College database has not yet been implemented!
-DEBUG    root:backend.py:24 Connecting to college database...
-CRITICAL root:backend.py:25 College database has not yet been implemented!
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = (1,)
-DEBUG    root:backend.py:72 new_ID = 2
+DEBUG    root:backend.py:63 past_ID = (1,)
+DEBUG    root:backend.py:70 new_ID = 2
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = (1,)
-DEBUG    root:backend.py:72 new_ID = 2
+DEBUG    root:backend.py:63 past_ID = (1,)
+DEBUG    root:backend.py:70 new_ID = 2
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = None
-DEBUG    root:backend.py:72 new_ID = 1
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = None
-DEBUG    root:backend.py:72 new_ID = 1
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = None
-DEBUG    root:backend.py:72 new_ID = 1
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:65 past_ID = None
-DEBUG    root:backend.py:72 new_ID = 1
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend_test.py:16 Connecting to personal (local) database...
+DEBUG    root:backend_test.py:25 Connected to database
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:99 users = [(1, 'George', 'Cooke', '25cookeg899@collyers.ac.uk', 'SuperPassword123', '07802 447089', 'ADMIN')]
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
 DEBUG    root:backend.py:15 Connecting to personal (local) database...
 DEBUG    root:backend.py:31 Connected to database
-DEBUG    root:backend.py:99 users = []
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = (1,)
+DEBUG    root:backend.py:70 new_ID = 2
+DEBUG    root:backend_test.py:16 Connecting to personal (local) database...
+DEBUG    root:backend_test.py:25 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = (1,)
+DEBUG    root:backend.py:70 new_ID = 2
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = (2,)
+DEBUG    root:backend.py:70 new_ID = 3
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = (3,)
+DEBUG    root:backend.py:70 new_ID = 4
+DEBUG    root:backend_test.py:16 Connecting to personal (local) database...
+DEBUG    root:backend_test.py:25 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = [(1, 'George', 'Cooke', '25cookeg899@collyers.ac.uk', 'SuperPassword123*', '07802 447089', 'VISITOR')]
+DEBUG    root:backend.py:97 len(users) = 1
+CRITICAL root:backend.py:113 Email is already in email, not inserting!
+DEBUG    root:backend_test.py:16 Connecting to personal (local) database...
+DEBUG    root:backend_test.py:25 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = [(1, 'George', 'Cooke', '25cookeg899@collyers.ac.uk', 'SuperPassword123*', '07802 447089', 'VISITOR')]
+DEBUG    root:backend.py:97 len(users) = 1
+DEBUG    root:backend_test.py:16 Connecting to personal (local) database...
+DEBUG    root:backend_test.py:25 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:63 past_ID = None
+DEBUG    root:backend.py:70 new_ID = 1
+DEBUG    root:backend.py:15 Connecting to personal (local) database...
+DEBUG    root:backend.py:31 Connected to database
+DEBUG    root:backend.py:96 users = []
+DEBUG    root:backend.py:97 len(users) = 0
