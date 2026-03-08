@@ -189,13 +189,15 @@ class Backend:
         #TODO: Implement - generate_pdf
         pass
 
-    def add_performance(self, title: str, description: str, child_price: float = 5, adult_price: float = 10, elderly_price: float = 5) -> int:
+    def _validate_new_performance_prices(self, child_price: float, adult_price: float, elderly_price: float) -> bool:
         """
-        Adds the event and returns the performanceID for the new performance so that showings can be added
+        Validates the number of decimal places and digits of the proposed prices. Returns False if invalid or True if valid.
+        Constraints are that there must not be more than 5 digits before the decimal place and that there may not be more than 2 digits after the decimal place.
         """
+
         if child_price >= 100_000 or adult_price >= 100_000 or elderly_price >= 100_000:
             logging.critical("Price with more than 5 digits before decimal entered, not entering.")
-            raise Exception("Price too high. Cannot have more than 5 digits before decimal place.")
+            return False
         
         child_split = str(child_price).split(".")
         adult_split = str(adult_price).split(".")
@@ -204,18 +206,26 @@ class Backend:
         if len(child_split) == 2:
             if len(child_split[1]) > 2:
                 logging.critical(f"Child price has too many decimal places given. {child_price = }")
-                raise Exception("Child price has too many decimal places given")
+                return False
             
         if len(adult_split) == 2:
             if len(adult_split[1]) > 2:
                 logging.critical(f"Adult price has too many decimal places given. {adult_price = }")
-                raise Exception("Adult price has too many decimal places given")
+                return False
             
         if len(elderly_split) == 2:
             if len(elderly_split[1]) > 2:
                 logging.critical(f"Elderly price has too many decimal places given. {elderly_price = }")
-                raise Exception("Elderly price has too many decimal places given")
+                return False
             
+        return True
+
+    def add_performance(self, title: str, description: str, child_price: float = 5, adult_price: float = 10, elderly_price: float = 5) -> int:
+        """
+        Adds the event and returns the performanceID for the new performance so that showings can be added
+        """
+        if self._validate_new_performance_prices(child_price=child_price, adult_price=adult_price, elderly_price=elderly_price) == False:
+            raise Exception("Failed price validation")
 
         with self._connection() as connection:
             next_id = self._get_next_ID(table="Performances")

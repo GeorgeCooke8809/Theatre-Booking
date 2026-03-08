@@ -8,6 +8,7 @@ class TestBackend():
     @pytest.fixture(autouse = True)
     def create_backend(self):
         self.backend = Backend("PERSONAL")
+        self._clear_databases()
 
     def _connection(self):
         """
@@ -66,68 +67,53 @@ class TestBackend():
         assert type(self.backend._get_next_ID("Showings")) == int
 
     def test_add_user_valid_data(self):
-        self._clear_databases()
-
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend._get_next_ID("Users") == 2
 
     def test_add_multiple_users(self):
-        self._clear_databases()
-
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
         self.backend.create_user("Olly", "Kitson", "ollynortheykitson@icloud.com", "07802 447089", "SuperPassword1234*")
-        self.backend.create_user("Akil", "rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword12345*")
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword12345*")
 
         assert self.backend._get_next_ID("Users") == 4
 
-    def test_add_same_email(self): # should fail
-        self._clear_databases()
-
+    def test_add_same_email(self):
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         with pytest.raises(Exception):
             self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
     def test_email_in_database_with_email_in_database(self):
-        self._clear_databases()
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_email_in_database("25cookeg899@collyers.ac.uk") == True
 
     def test_email_in_database_with_email_not_in_database(self):
-        self._clear_databases()
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_email_in_database("ksdhdglwuvg@gmail.com") == False
 
     def test_check_password_correct(self):
-        self._clear_databases()
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123*") == True
 
     def test_check_password_incorrect(self):
-        self._clear_databases()
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123") == False
 
     def test_check_password_empty_database(self):
-        self._clear_databases()
-
         assert self.backend.check_password(email="25cookeg899@collyers.ac.uk", password_attempt="SuperPassword123") == False
 
     def test_check_password_no_email(self):
-        self._clear_databases()
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_password(email="25cookeg89@collyers.ac.uk", password_attempt="SuperPassword123") == False
 
     def test_add_performance_valid(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y", 5.0, 10.0, 5.0) == 1
+        assert self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0) == 1
         assert self.backend._get_next_ID("Performances") == 2
 
         with self._connection() as connection:
@@ -141,9 +127,7 @@ class TestBackend():
             assert float(values[2]) == 5
 
     def test_add_performances_default_prices(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y") == 1
+        assert self.backend.add_performance("Lorem Ipsum", "This is a super duper description") == 1
         assert self.backend._get_next_ID("Performances") == 2
 
         with self._connection() as connection:
@@ -157,9 +141,7 @@ class TestBackend():
             assert float(values[2]) == 5
 
     def test_add_performance_decimal_prices(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 7.4, 15, 2.5) == 1
+        assert self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 7.4, 15, 2.5) == 1
         assert self.backend._get_next_ID("Performances") == 2
 
         with self._connection() as connection:
@@ -173,9 +155,7 @@ class TestBackend():
             assert float(values[2]) == 2.5
 
     def test_add_performance_large_numbers_no_decimal(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 250, 1500, 750) == 1
+        assert self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 250, 1500, 750) == 1
         assert self.backend._get_next_ID("Performances") == 2
 
         with self._connection() as connection:
@@ -189,9 +169,7 @@ class TestBackend():
             assert float(values[2]) == 750
 
     def test_add_performance_large_numbers_decimal(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 749.99) == 1
+        assert self.backend.add_performance("Lorem Ipsumm", "lThis is a super duper description", 249.99, 1499.99, 749.99) == 1
         assert self.backend._get_next_ID("Performances") == 2
 
         with self._connection() as connection:
@@ -205,46 +183,32 @@ class TestBackend():
             assert float(values[2]) == 749.99
 
     def test_add_performance_too_many_decimals_child(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.999, 1499.99, 749.99)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 249.999, 1499.99, 749.99)
 
     def test_add_performance_too_many_decimals_adult(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.999, 749.99)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 249.99, 1499.999, 749.99)
 
     def test_add_performance_too_many_decimals_elderly(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 749.999)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 249.99, 1499.99, 749.999)
 
     def test_add_performance_too_many_digits_before_decimal_child(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 100_249.99, 1499.99, 749.99)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 100_249.99, 1499.99, 749.99)
 
     def test_add_performance_too_many_digits_before_decimal_adult(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 100_1499.99, 749.99)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 249.99, 100_1499.99, 749.99)
 
     def test_add_performance_too_many_digits_before_decimal_elderly(self):
-        self._clear_databases()
-
         with pytest.raises(Exception):
-            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 100_749.99)
+            self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 249.99, 1499.99, 100_749.99)
 
     def test_add_performances_multiple(self):
-        self._clear_databases()
-
-        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y") == 1
-        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 7.6, 15, 2.5) == 2
+        assert self.backend.add_performance("Lorem Ipsum", "This is a super duper description") == 1
+        assert self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 7.6, 15, 2.5) == 2
         assert self.backend._get_next_ID("Performances") == 3
 
         with self._connection() as connection:
