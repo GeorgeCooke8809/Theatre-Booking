@@ -154,6 +154,22 @@ class Backend:
         #TODO: Implement - get_all_performance_showings
         pass
 
+    def _check_valid_seat_ID(self, seatID: str) -> bool:
+        """
+        Validates if the specified seatID is valid.
+        Returns true if valid, false if not.
+        Used in the mark_seat_unavailable and book_seat functions
+        """
+        # TODO: Implement _check_valid_seat_ID
+        pass
+
+    def mark_seat_unavailable(self, seatID: str, performanceID: str) -> None:
+        """
+        Marks the specified seat as unavailable for the specified performance
+        """
+        #TODO: Implement mark_seat_unavailable
+        pass
+
     def get_unavailable_seats(self, showingID: int) -> list[str]:
         """
         Gets and returns a list of all the unavailable seats for the specified showing
