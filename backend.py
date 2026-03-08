@@ -262,7 +262,7 @@ class Backend:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
 
-    def add_showing(self, performanceID: int, date: datetime.date = datetime.date.today()) -> None:
+    def add_showing(self, performanceID: int, date: datetime.date = datetime.date.today()) -> int:
         """
         Adds a new showing to for the performance with the given performanceID on the specified date. Returns the newly added showingID
         """
@@ -313,13 +313,49 @@ class Backend:
                 raise Exception("Could not connect to database")
             
         return users
+    
+    def _check_user_exists(self, userID: int) -> bool:
+        """
+        Used in the validation of change_user_type to check that the user exists.
+        Returns true if the user exists, false if they do not.
+        """
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Checking user exists...")
+                cursor.execute("SELECT * FROM dbo.Users WHERE userID = ?", (userID))
+                user = cursor.fetchone()
+
+                if user == None:
+                    return False
+                else:
+                    return True
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def change_user_type(self, userID: int, new_type: str) -> None:
         """
         Changes the user type of the specified user to the one provided
         """
-        #TODO: Implement - change_user_type
-        pass
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist, cannot update type.")
+            raise Exception("User does not exist, cannot update type.")
+        
+        if new_type not in ["VISITOR", "SPECIAL", "ADMIN"]:
+            logging.critical("New user type is invalid.")
+            raise Exception("New user type is invalid")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug(f"Changing user {userID} to {new_type}...")
+                cursor.execute("UPDATE dbo.Users SET userType = ? WHERE userID = ?", (new_type, userID))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def delete_user(self, userID: int) -> None:
         """

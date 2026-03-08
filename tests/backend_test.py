@@ -281,3 +281,63 @@ class TestGetAllUsers(Test):
         assert type(users[0]) == tuple
 
         assert users[0] == (1, "George", "Cooke", "07802 447089", "VISITOR")
+
+class TestUserExists(Test):
+    def test_check_user_exists_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        assert self.backend._check_user_exists(1) == True
+
+    def test_check_user_exists_invalid(self):
+        assert self.backend._check_user_exists(1) == False
+
+class TestChangeUserType(Test):
+    def test_change_user_type_ADMIN(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.change_user_type(1, "ADMIN")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (1))
+            userType = cursor.fetchone()[0]
+
+        assert userType == "ADMIN"
+
+    def test_change_user_type_SPECIAL(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.change_user_type(1, "SPECIAL")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (1))
+            userType = cursor.fetchone()[0]
+
+        assert userType == "SPECIAL"
+
+    def test_change_user_type_VISITOR(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.change_user_type(1, "SPECIAL")
+        self.backend.change_user_type(1, "VISITOR")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (1))
+            userType = cursor.fetchone()[0]
+
+        assert userType == "VISITOR"
+
+    def test_change_user_type_invalid_type(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.change_user_type(1, "GUEST")
+
+    def test_change_user_type_invalid_ID(self):
+        with pytest.raises(Exception):
+            self.backend.change_user_type(1, "ADMIN")
