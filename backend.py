@@ -245,6 +245,7 @@ class Backend:
     def _check_performance_exists(self, performanceID) -> bool:
         """
         Validation for checking a performance exists before pushing to it.
+        Returns true if the performance exists, false if it doesn't
         """
         with self._connection() as connection:
             if connection is not None:
@@ -263,9 +264,12 @@ class Backend:
 
     def add_showing(self, performanceID: int, date: datetime.date = datetime.date.today()) -> None:
         """
-        Adds a new showing to for the performance with the given performanceID on the specified date
+        Adds a new showing to for the performance with the given performanceID on the specified date. Returns the newly added showingID
         """
-        #TODO: Implement - add_showing
+        if self._check_performance_exists(performanceID) == False:
+            logging.critical("PerformanceID does not exist.")
+            raise Exception("PerformanceID does not exist.")
+
         if type(date) != datetime.date:
             logging.critical(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
             raise Exception(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
@@ -281,6 +285,8 @@ class Backend:
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
+            
+        return next_id
 
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, list[str]]]:
         """

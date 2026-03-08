@@ -1,6 +1,7 @@
 import pyodbc
 import pytest
 import logging
+from datetime import date
 
 from backend import Backend
 
@@ -250,3 +251,19 @@ class TestPerformanceExists(Test):
         self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
 
         assert self.backend._check_performance_exists(66) == False
+
+class TestAddShowing(Test):
+    def test_add_showing_valid(self):
+        performanceID = self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+
+        assert self.backend.add_showing(performanceID, date(2026, 3, 9)) == 1
+
+    def test_add_showing_performance_does_not_exist(self):
+        with pytest.raises(Exception):
+            self.backend.add_showing(1, date(2026, 3, 9))
+
+    def test_add_showing_not_date_format(self):
+        performanceID = self.backend.add_performance("Lorem Ipsum", "This is a super duper description")
+
+        with pytest.raises(Exception):
+            self.backend.add_showing(performanceID, "2026/03/09")
