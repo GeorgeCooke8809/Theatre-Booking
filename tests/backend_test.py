@@ -123,3 +123,143 @@ class TestBackend():
         self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
 
         assert self.backend.check_password(email="25cookeg89@collyers.ac.uk", password_attempt="SuperPassword123") == False
+
+    def test_add_performance_valid(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y", 5.0, 10.0, 5.0) == 1
+        assert self.backend._get_next_ID("Performances") == 2
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 5
+            assert float(values[1]) == 10
+            assert float(values[2]) == 5
+
+    def test_add_performances_default_prices(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y") == 1
+        assert self.backend._get_next_ID("Performances") == 2
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 5
+            assert float(values[1]) == 10
+            assert float(values[2]) == 5
+
+    def test_add_performance_decimal_prices(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 7.4, 15, 2.5) == 1
+        assert self.backend._get_next_ID("Performances") == 2
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 7.4
+            assert float(values[1]) == 15
+            assert float(values[2]) == 2.5
+
+    def test_add_performance_large_numbers_no_decimal(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 250, 1500, 750) == 1
+        assert self.backend._get_next_ID("Performances") == 2
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 250
+            assert float(values[1]) == 1500
+            assert float(values[2]) == 750
+
+    def test_add_performance_large_numbers_decimal(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 749.99) == 1
+        assert self.backend._get_next_ID("Performances") == 2
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 249.99
+            assert float(values[1]) == 1499.99
+            assert float(values[2]) == 749.99
+
+    def test_add_performance_too_many_decimals_child(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.999, 1499.99, 749.99)
+
+    def test_add_performance_too_many_decimals_adult(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.999, 749.99)
+
+    def test_add_performance_too_many_decimals_elderly(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 749.999)
+
+    def test_add_performance_too_many_digits_before_decimal_child(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 100_249.99, 1499.99, 749.99)
+
+    def test_add_performance_too_many_digits_before_decimal_adult(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 100_1499.99, 749.99)
+
+    def test_add_performance_too_many_digits_before_decimal_elderly(self):
+        self._clear_databases()
+
+        with pytest.raises(Exception):
+            self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 249.99, 1499.99, 100_749.99)
+
+    def test_add_performances_multiple(self):
+        self._clear_databases()
+
+        assert self.backend.add_performance("Lorem Ipsum", "lwjghlwhgl wggluiahg igal rgahg;.aj   gl y") == 1
+        assert self.backend.add_performance("Lorem Ipsumm", "lwjghlwhgl wggluiahg igal ;.aj   gl y", 7.6, 15, 2.5) == 2
+        assert self.backend._get_next_ID("Performances") == 3
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (1))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 5
+            assert float(values[1]) == 10
+            assert float(values[2]) == 5
+
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (2))
+            values = cursor.fetchone()
+
+            assert float(values[0]) == 7.6
+            assert float(values[1]) == 15
+            assert float(values[2]) == 2.5

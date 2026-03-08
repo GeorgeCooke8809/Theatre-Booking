@@ -189,12 +189,47 @@ class Backend:
         #TODO: Implement - generate_pdf
         pass
 
-    def add_event(self, title: str, description: str, child_price: float = 5, adult_price: float = 10, elderly_price: float = 5) -> int:
+    def add_performance(self, title: str, description: str, child_price: float = 5, adult_price: float = 10, elderly_price: float = 5) -> int:
         """
         Adds the event and returns the performanceID for the new performance so that showings can be added
         """
-        #TODO: Implement - add_event
-        pass
+        if child_price >= 100_000 or adult_price >= 100_000 or elderly_price >= 100_000:
+            logging.critical("Price with more than 5 digits before decimal entered, not entering.")
+            raise Exception("Price too high. Cannot have more than 5 digits before decimal place.")
+        
+        child_split = str(child_price).split(".")
+        adult_split = str(adult_price).split(".")
+        elderly_split = str(elderly_price).split(".")
+
+        if len(child_split) == 2:
+            if len(child_split[1]) > 2:
+                logging.critical(f"Child price has too many decimal places given. {child_price = }")
+                raise Exception("Child price has too many decimal places given")
+            
+        if len(adult_split) == 2:
+            if len(adult_split[1]) > 2:
+                logging.critical(f"Adult price has too many decimal places given. {adult_price = }")
+                raise Exception("Adult price has too many decimal places given")
+            
+        if len(elderly_split) == 2:
+            if len(elderly_split[1]) > 2:
+                logging.critical(f"Elderly price has too many decimal places given. {elderly_price = }")
+                raise Exception("Elderly price has too many decimal places given")
+            
+
+        with self._connection() as connection:
+            next_id = self._get_next_ID(table="Performances")
+
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Adding new performance")
+                cursor.execute("INSERT INTO dbo.Performances VALUES(?, ?, ?, ?, ?, ?)", (next_id, title, description, child_price, adult_price, elderly_price))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return next_id
 
     def add_showing(self, performanceID: int, date: datetime.date = datetime.date.today()) -> None:
         """
