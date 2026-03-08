@@ -375,3 +375,39 @@ class TestCheckUserAdmin(Test):
     def test_check_user_admin_invalid_user(self):
         with pytest.raises(Exception):
             self.backend.check_user_admin(1)
+
+class TestGetBookingPrice(Test):
+    def test_get_booking_price_special_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.change_user_type(1, "SPECIAL")
+
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        assert self.backend.get_booking_price(1, 1, 5, 5, 5) == "£0.00"
+
+    def test_get_booking_price_visitor_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        assert self.backend.get_booking_price(1, 1, 5, 5, 5) == "£100.00"
+
+    def test_get_booking_price_admin_valid(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.change_user_type(1, "ADMIN")
+
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        assert self.backend.get_booking_price(1, 1, 5, 5, 5) == "£100.00"
+
+    def test_get_booking_price_invalid_userID(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        with pytest.raises(Exception):
+            assert self.backend.get_booking_price(userID=1, performanceID=1, no_child_seats=5, no_adult_seats=5, no_elderly_seats=5) == "£100.00"
+
+    def test_get_booking_price_invalid_performanceID(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        
+        with pytest.raises(Exception):
+            assert self.backend.get_booking_price(userID=1, performanceID=1, no_child_seats=5, no_adult_seats=5, no_elderly_seats=5) == "£100.00"

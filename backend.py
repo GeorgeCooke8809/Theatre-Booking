@@ -168,12 +168,40 @@ class Backend:
         #TODO: Implement - book_seat
         pass
 
-    def get_booking_price(self, userID: int, performanceID: int, no_child_seats: int, no_adult_seats: int, no_elderly_seats: int) -> float:
+    def get_booking_price(self, userID: int, performanceID: int, no_child_seats: int, no_adult_seats: int, no_elderly_seats: int) -> str:
         """
-        Calculates the price for a potential booking based on specified values, userID is used to check if user is special guest
+        Calculates the price for a potential booking based on specified values, userID is used to check if user is special guest.
+        Returns in the format "£x.xx"
         """
-        #TODO: Implement - get_booking_price
-        pass
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist, cannot check user admin status.")
+            raise Exception("User does not exist, cannot check user admin status.")
+        
+        if self._check_performance_exists(userID) == False:
+            logging.critical("Performance doesn't exist.")
+            raise Exception("Performance doesn't exist.")
+        
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting user type...")
+                cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (userID))
+                user_type = cursor.fetchone()[0]
+
+                if user_type == "SPECIAL":
+                    return "£0.00"
+                
+                logging.debug("Getting prices...")
+                cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?" (performanceID))
+                prices = cursor.fetchone()
+
+                price = (prices[0] * no_child_seats) + (prices[1] * no_adult_seats) + (prices[2] * no_elderly_seats)
+
+                return f"£{price:.2f}"
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_user_bookings(self, userID: int, date_from: datetime.date = datetime.date.today()) -> list[tuple[int, str]]:
         """
@@ -316,7 +344,7 @@ class Backend:
     
     def _check_user_exists(self, userID: int) -> bool:
         """
-        Used in the validation of change_user_type and delete_user to check that the user exists.
+        Used in the validation of change_user_type, get_booking_price and delete_user to check that the user exists.
         Returns true if the user exists, false if they do not.
         """
         with self._connection() as connection:
@@ -361,7 +389,6 @@ class Backend:
         """
         Deletes the provided user
         """
-        #TODO: Implement - delete_user
         if self._check_user_exists(userID) == False:
             logging.critical("User does not exist, cannot delete user.")
             raise Exception("User does not exist, cannot delete user.")
