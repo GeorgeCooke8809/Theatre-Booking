@@ -227,10 +227,48 @@ class Backend:
 
     def get_unavailable_seats(self, showingID: int) -> list[str]:
         """
-        Gets and returns a list of all the unavailable seats for the specified showing
+        Gets and returns a list of all the unavailable seats for the specified showing.
+        Includes booked seats and unavailable seats. Ordered alphabetically first by letter then number.
         """
         #TODO: Implement - get_unavailable_seats
-        pass
+        #TODO: test with booked seats
+        if self._check_showing_exists(showingID) == False:
+            logging.critical("Showing does not exist")
+            raise Exception("Showing does not exist.")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT performanceID FROM dbo.Showings WHERE showingID = ?", (showingID))
+                performanceID = cursor.fetchone()[0]
+
+                cursor.execute("SELECT seatID FROM dbo.PerformanceUnavailableSeats WHERE performanceID = ?", (performanceID))
+                unavailable_seats = cursor.fetchall()
+                unavailable_seats = [seat[0] for seat in unavailable_seats]
+
+                cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
+                bookingIDs = cursor.fetchall()
+                bookingIDs = f"({",".join(bookingID[0] for bookingID in bookingIDs)})"
+
+                logging.debug(f"{bookingIDs = }")
+
+                if bookingIDs != "()":
+                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE bookingID IN ?", (bookingIDs))
+                    booked_seats = cursor.fetchall()
+                    booked_seats = [seat[0] for seat in booked_seats]
+                else:
+                    booked_seats = []
+
+                unavailable_seats.extend(booked_seats)
+                unavailable_seats.sort(key = lambda x: f"{x[-1]}{int(x[0:-1]):02d}")
+
+                return unavailable_seats
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return unavailable_seats
 
     def _check_seat_available(self, seatID: str, showingID: int) -> bool:
         """
