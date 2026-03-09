@@ -230,8 +230,6 @@ class Backend:
         Gets and returns a list of all the unavailable seats for the specified showing.
         Includes booked seats and unavailable seats. Ordered alphabetically first by letter then number.
         """
-        #TODO: Implement - get_unavailable_seats
-        #TODO: test with booked seats
         if self._check_showing_exists(showingID) == False:
             logging.critical("Showing does not exist")
             raise Exception("Showing does not exist.")
@@ -282,7 +280,6 @@ class Backend:
         Checks if a seat is available.
         Used in the book_seat function
         """
-        #TODO: test with bookings
         if self._check_showing_exists(showingID) == False:
             logging.critical("Showing does not exist")
             raise Exception("Showing does not exist")

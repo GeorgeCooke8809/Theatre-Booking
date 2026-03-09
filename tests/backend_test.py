@@ -488,7 +488,6 @@ class TestCheckShowingExists(Test):
             self.backend._check_showing_exists("ABC") == False
 
 class TestGetUnavailableSeats(Test):
-    # TODO: test with bookings added
     def test_get_unavailable_seats_valid(self):
         self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
         self.backend.add_showing(1, date(2026, 3, 10))
@@ -497,6 +496,19 @@ class TestGetUnavailableSeats(Test):
             self.backend.mark_seat_unavailable(seat, 1)
 
         assert self.backend.get_unavailable_seats(1) == ["1A", "1B", "1C", "5H", "10T"]
+
+    def test_get_unavailable_seats_valid_with_bookings(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        for seat in ["1A", "1B", "1C", "5H", "10T"]:
+            self.backend.mark_seat_unavailable(seat, 1)
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["9T"], 1, ["ADULT"])
+
+        assert self.backend.get_unavailable_seats(1) == ["1A", "1B", "1C", "5H", "9T", "10T"]
 
     def test_get_unavailable_seats_showing_does_not_exist(self):
         with pytest.raises(Exception):
