@@ -4,9 +4,9 @@
 
 -- CREATE TABLE dbo.BookingSeats(bookingSeatID INT NOT NULL, bookingID INT NOT NULL, seatID VARCHAR(3) NOT NULL, bookingType VARCHAR(7) NOT NULL);
 
-CREATE TABLE dbo.Performances(performanceID INT NOT NULL, title VARCHAR(100) NOT NULL, performanceDescription VARCHAR(MAX) NOT NULL, childPrice DECIMAL(7, 2) NOT NULL, adultPrice DECIMAL(7, 2) NOT NULL, elderlyPrice DECIMAL(7, 2) NOT NULL);
+-- CREATE TABLE dbo.Performances(performanceID INT NOT NULL, title VARCHAR(100) NOT NULL, performanceDescription VARCHAR(MAX) NOT NULL, childPrice DECIMAL(7, 2) NOT NULL, adultPrice DECIMAL(7, 2) NOT NULL, elderlyPrice DECIMAL(7, 2) NOT NULL);
 
--- CREATE TABLE dbo.PerformanceUnavailableSeats(PerformanceUnavailableSeatID INT NOT NULL, performanceID INT NOT NULL, seatID INT NOT NULL);
+CREATE TABLE dbo.PerformanceUnavailableSeats(PerformanceUnavailableSeatID INT NOT NULL, performanceID INT NOT NULL, seatID VARCHAR(3) NOT NULL);
 
 -- CREATE TABLE dbo.Seats(seatID VARCHAR(3) NOT NULL);
 

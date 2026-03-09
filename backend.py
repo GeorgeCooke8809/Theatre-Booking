@@ -181,7 +181,25 @@ class Backend:
         Marks the specified seat as unavailable for the specified performance
         """
         #TODO: Implement mark_seat_unavailable
-        pass
+        if self._check_valid_seat_ID(seatID) == False:
+            logging.critical("Invalid seatID given.")
+            raise Exception("Invalid seatID given.")
+        
+        if self._check_performance_exists(performanceID) == False:
+            logging.critical("Performance does not exist.")
+            raise Exception("Performance does not exist.")
+
+        with self._connection() as connection:
+            next_id = self._get_next_ID("PerformanceUnavailableSeats")
+
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Marking seat as unavailable...")
+                cursor.execute("INSERT INTO dbo.PerformanceUnavailableSeats VALUES(?, ?, ?)", (next_id, performanceID, seatID))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_unavailable_seats(self, showingID: int) -> list[str]:
         """
@@ -190,11 +208,12 @@ class Backend:
         #TODO: Implement - get_unavailable_seats
         pass
 
-    def _check_seat_available(self, seatID: str) -> bool:
+    def _check_seat_available(self, seatID: str, showingID: int) -> bool:
         """
         Checks if a seat is available.
         Used in the book_seat function
         """
+        pass
 
     def book_seat(self, seatID: str, showingID: int, seat_type: str) -> None:
         """
@@ -357,7 +376,7 @@ class Backend:
         The showing attendees will be made up of the following tuples [(userID, user first name, user last name, user phone)] and will be sorted by ascending surname alphabetically
         """
         #TODO: Implement - admin_get_showings
-        #TODO: Test
+        #TODO: Test admin_get_showings - I wrote this before adding functionality to actually booking seats so I don't know if the attendees bit would work and haven;t been able to test at all as a result
         if self._check_performance_exists(performanceID) == False:
             logging.critical("PerformanceID does not exist.")
             raise Exception("PerformanceID does not exist.")
@@ -375,7 +394,7 @@ class Backend:
                 for showing in showings_result:
                     showingID = showing[0]
                     showing_date = showing[1]
-                    showing_date = showing_date.strftime("%A %d %B, %Y")
+                    showing_date = showing_date.strftime("%A %d %B, %Y") # this likely won't work on the college servers because of different SQL versions
 
                     cursor.execute("SELECT userID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                     users_result = cursor.fetchall()

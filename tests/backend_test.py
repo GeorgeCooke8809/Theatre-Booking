@@ -422,6 +422,9 @@ class TestCheckSeatIDValid(Test):
     def test_check_seat_ID_valid_number_invalid(self):
         assert self.backend._check_valid_seat_ID("11B") == False
 
+    def test_check_seat_ID_valid_number_invalid_negative(self):
+        assert self.backend._check_valid_seat_ID("-1B") == False
+
     def test_check_seat_ID_valid_letter_invalid(self):
         assert self.backend._check_valid_seat_ID("5U") == False
 
@@ -430,3 +433,36 @@ class TestCheckSeatIDValid(Test):
 
     def test_check_seat_ID_valid_letter_is_number(self):
         assert self.backend._check_valid_seat_ID("91") == False
+
+class TestMarkSeatUnavailable(Test):
+    def test_mark_seat_unavailable_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.mark_seat_unavailable("1B", 1)
+
+    def test_mark_seat_unavailable_multiple_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        for seat in ["1A", "1B", "1C", "5H", "10T"]:
+            self.backend.mark_seat_unavailable(seat, 1)
+
+    def test_mark_seat_unavailable_invalid_seatID_number(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        with pytest.raises(Exception):
+            self.backend.mark_seat_unavailable("11B", 1)
+
+    def test_mark_seat_unavailable_invalid_seatID_letter(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        with pytest.raises(Exception):
+            self.backend.mark_seat_unavailable("5U", 1)
+
+    def test_mark_seat_unavailable_invalid_performanceID(self):
+        with pytest.raises(Exception):
+            self.backend.mark_seat_unavailable("5B", 1)
+
+    def test_mark_seat_unavailable_invalid_seatID_number_negative(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        with pytest.raises(Exception):
+            self.backend.mark_seat_unavailable("-1B", 1)
