@@ -249,12 +249,19 @@ class Backend:
 
                 cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                 bookingIDs = cursor.fetchall()
-                bookingIDs = f"({",".join(bookingID[0] for bookingID in bookingIDs)})"
+                if len(bookingIDs) == 1:
+                    bookingIDs = bookingIDs[0][0]
+                else:
+                    bookingIDs = f"({",".join(str(bookingID[0]) for bookingID in bookingIDs)})"
 
                 logging.debug(f"{bookingIDs = }")
 
-                if bookingIDs != "()":
-                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE bookingID IN ?", (bookingIDs))
+                if type(bookingIDs) == int:
+                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE bookingID = ?", (bookingIDs))
+                    booked_seats = cursor.fetchall()
+                    booked_seats = [seat[0] for seat in booked_seats]
+                elif bookingIDs != "()":
+                    cursor.execute(f"SELECT seatID FROM dbo.BookingSeats WHERE bookingID IN {bookingIDs}")
                     booked_seats = cursor.fetchall()
                     booked_seats = [seat[0] for seat in booked_seats]
                 else:
@@ -301,13 +308,22 @@ class Backend:
                 logging.debug("Getting seat from bookings...")
                 cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                 bookings = cursor.fetchall()
-                bookings = f"({",".join(booking[0] for booking in bookings)})"
+                if len(bookings) == 1:
+                    bookings = bookings[0][0]
+                else:
+                    bookings = f"({",".join(str(booking[0]) for booking in bookings)})"
 
                 logging.debug(f"{bookings = }")
 
-                if bookings != "()":
-                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE seatID = ? AND bookingID IN ?", (seatID, bookings))
-                    booking = cursor.fetchone[0]
+                if type(bookings) == int:
+                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE seatID = ? AND bookingID = ?", (seatID, bookings))
+                    booking = cursor.fetchone()
+
+                    if booking != None:
+                        return False
+                elif bookings != "()":
+                    cursor.execute(f"SELECT seatID FROM dbo.BookingSeats WHERE seatID = ? AND bookingID IN {bookings}", (seatID))
+                    booking = cursor.fetchone()
 
                     if booking != None:
                         return False
@@ -317,12 +333,62 @@ class Backend:
             
         return True
 
-    def book_seat(self, seatID: str, showingID: int, seat_type: str) -> None:
+    def book_seats(self, userID: int, seatIDs: list[str], showingID: int, seat_types: list[str]) -> None:
         """
         Books the specified seat for the specified showing
         """
-        #TODO: Implement - book_seat
-        pass
+        for seatID in seatIDs:
+            if self._check_seat_available(seatID, showingID) == False:
+                logging.critical(f"Seat {seatID} is not available, cannot book.")
+                raise Exception(f"Seat {seatID} is not available, cannot book")
+            
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist")
+            raise Exception("User does not exist")
+            
+        if seatIDs == [] or seatIDs == None:
+            logging.critical("No seatIDs given.")
+            raise Exception("No seatIDs given")
+
+        if len(seatIDs) != len(set(seatIDs)):
+            logging.critical("Repeat seats present, cannot push")
+            raise Exception("Repeat seats present, cannot push")
+        
+        if self._check_showing_exists(showingID) == False:
+            logging.critical("Showing does not exist")
+            raise Exception("Showing does not exist")
+
+        for seat_type in seat_types:
+            if seat_type not in ["CHILD", "ADULT", "ELDERLY"]:
+                logging.critical(f"Invalid seat type given: {seat_type}")
+                raise Exception(f"Invalid seat type given: {seat_type}")
+            
+        if len(seatIDs) != len(seat_types):
+            logging.critical("SeatIDs and seat_types length mismatch")
+            raise Exception("SeatIDs and seat_types length mismatch")
+        
+        next_booking_id = self._get_next_ID("Bookings")
+        
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Adding booking...")
+                cursor.execute("INSERT INTO dbo.Bookings VALUES(?, ?, ?)", (next_booking_id, showingID, userID))
+
+                for i in range(len(seatIDs)):
+                    seatID = seatIDs[i]
+                    seat_type = seat_types[i]
+
+                    logging.debug(f"Booking seat {seatID} of type {seat_type} for showing {showingID}")
+
+                    next_booking_seat_id = self._get_next_ID("BookingSeats")
+
+                    cursor.execute("INSERT INTO dbo.BookingSeats VALUES(?, ?, ?, ?)", (next_booking_seat_id, next_booking_id, seatID, seat_type))
+                    cursor.commit()
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_booking_price(self, userID: int, performanceID: int, no_child_seats: int, no_adult_seats: int, no_elderly_seats: int) -> str:
         """

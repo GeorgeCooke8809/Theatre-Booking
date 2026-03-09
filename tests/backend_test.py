@@ -540,3 +540,137 @@ class TestCheckSeatAvailable(Test):
 
         with pytest.raises(Exception):
             self.backend._check_seat_available("11A", 1)
+
+class TestBookSeats(Test):
+    def test_book_seats_valid_single_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1B"], 1, ["CHILD"])
+
+        assert self.backend._check_seat_available("1B", 1) == False
+
+    def test_book_seats_valid_multiple_seats(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1B", "2A"], 1, ["CHILD", "ADULT"])
+
+        assert self.backend.get_unavailable_seats(1) == ["2A", "1B"]
+
+    def test_book_seats_invalid_too_many_types(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1B"], 1, ["CHILD", "ADULT"])
+
+    def test_book_seats_invalid_too_many_seats(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1B", "2A"], 1, ["ADULT"])
+
+    def test_book_seats_invalid_no_seats(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, [], 1, ["ADULT"])
+
+    def test_book_seats_invalid_no_types(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A"], 1, [])
+
+    def test_book_seats_invalid_user(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+    def test_book_seats_invalid_showing(self):
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+    def test_book_seats_invalid_seatID(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["11A"], 1, ["ADULT"])
+
+    def test_book_seats_invalid_type(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A"], 1, ["HHHH"])
+
+    def test_book_seats_invalid_same_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A", "1A"], 1, ["ADULT", "CHILD"])
+
+    def test_book_seats_valid_multiple_bookings(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword1234*")
+        self.backend.create_user("Olly", "Kitson", "ollynortheykitson@icloud.com", "07802 447089", "SuperPassword1234*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(2, ["1B"], 1, ["ADULT"])
+        self.backend.book_seats(3, ["1C"], 1, ["ADULT"])
+
+        assert self.backend.get_unavailable_seats(1) == ["1A", "1B", "1C"]
+
+    def test_book_seats_invalid_multiple_bookings_same_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword1234*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(2, ["1A"], 1, ["ADULT"])
+
+    def test_booking_seats_invalid_unavailable_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        
+        self.backend.mark_seat_unavailable("1A", 1)
+
+        with pytest.raises(Exception):
+            self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
