@@ -509,8 +509,6 @@ class TestGetUnavailableSeats(Test):
         assert self.backend.get_unavailable_seats(1) == []
 
 class TestCheckSeatAvailable(Test):
-    #TODO: test with bookings
-
     def test_check_seat_available_valid_marked_unavailable_true(self):
         self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
         self.backend.add_showing(1, date(2026, 3, 10))
@@ -540,6 +538,16 @@ class TestCheckSeatAvailable(Test):
 
         with pytest.raises(Exception):
             self.backend._check_seat_available("11A", 1)
+
+    def test_check_seat_available_valid_seat_booked(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperDuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+        assert self.backend._check_seat_available("1A", 1) == False
 
 class TestBookSeats(Test):
     def test_book_seats_valid_single_seat(self):
