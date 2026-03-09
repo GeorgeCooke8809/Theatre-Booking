@@ -426,8 +426,38 @@ class Backend:
         Gets and returns a list of all bookings for a user after the specified date (defaults to today).
         Returns in format [(bookingID: int, booking title: str)]
         """
-        #TODO: Implement - get_user_bookings
-        pass
+        if self._check_user_exists(userID) == False:
+            logging.critical("User does not exist")
+            raise Exception("User does not exist")
+        
+        if type(date_from) != datetime.date:
+            logging.critical("Date from given is not datetime.date")
+            raise Exception("Date from given is not datetime.date")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting bookings...")
+                cursor.execute("SELECT bookingID, showingID FROM dbo.Bookings WHERE userID = ? AND showingID IN (SELECT showingID FROM dbo.Showings WHERE showingDate >= ?)", (userID, date_from))
+                bookings_sql = cursor.fetchall()
+
+                logging.debug(f"{bookings_sql = }")
+
+                bookings = []
+
+                for booking in bookings_sql:
+                    bookingID = booking[0]
+
+                    cursor.execute("SELECT title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingID = ?)", (booking[1]))
+                    performance_title = cursor.fetchone()[0]
+
+                    bookings.append((bookingID, performance_title))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return bookings
 
     def generate_pdf(self, bookingID: int) -> None:
         """
@@ -539,8 +569,6 @@ class Backend:
         Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, empty seats: int, showing attendees (names): list)]
         The showing attendees will be made up of the following tuples [(userID, user first name, user last name, user phone)] and will be sorted by ascending surname alphabetically
         """
-        #TODO: Implement - admin_get_showings
-        #TODO: Test admin_get_showings - I wrote this before adding functionality to actually booking seats so I don't know if the attendees bit would work and haven;t been able to test at all as a result
         if self._check_performance_exists(performanceID) == False:
             logging.critical("PerformanceID does not exist.")
             raise Exception("PerformanceID does not exist.")

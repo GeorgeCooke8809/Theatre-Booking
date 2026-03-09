@@ -746,3 +746,99 @@ class TestAdminGetShowings(Test):
     def test_admin_get_showings_invalid_showingID(self):
         with pytest.raises(Exception):
             self.backend.admin_get_showings(1)
+
+class TestGetUserBookings(Test):
+    def test_get_user_bookings_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+        self.backend.add_showing(1, date(2026, 3, 13))
+        self.backend.add_showing(1, date(2026, 3, 14))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 3, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 4, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
+
+        assert self.backend.get_user_bookings(1, date(2026, 3, 1)) == [(1, "Lorem Ipsum"), (2, "Lorem Ipsum"), (3, "Lorem Ipsum"), (4, "Lorem Ipsum"), (5, "Lorem Ipsum")]
+
+    def test_get_user_bookings_valid_boundary_date(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+        self.backend.add_showing(1, date(2026, 3, 13))
+        self.backend.add_showing(1, date(2026, 3, 14))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 3, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 4, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
+
+        assert self.backend.get_user_bookings(1, date(2026, 3, 10)) == [(1, "Lorem Ipsum"), (2, "Lorem Ipsum"), (3, "Lorem Ipsum"), (4, "Lorem Ipsum"), (5, "Lorem Ipsum")]
+
+    def test_get_user_bookings_valid_date_mid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+        self.backend.add_showing(1, date(2026, 3, 13))
+        self.backend.add_showing(1, date(2026, 3, 14))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 3, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 4, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
+
+        assert self.backend.get_user_bookings(1, date(2026, 3, 12)) == [(3, "Lorem Ipsum"), (4, "Lorem Ipsum"), (5, "Lorem Ipsum")]
+
+    def test_get_user_bookings_invalid_date_given(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+        self.backend.add_showing(1, date(2026, 3, 13))
+        self.backend.add_showing(1, date(2026, 3, 14))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 3, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 4, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
+
+        with pytest.raises(Exception):
+            self.backend.get_user_bookings(1, "09/03/2026")
+
+    def test_get_user_bookings_invalid_userID(self):
+        with pytest.raises(Exception):
+            self.backend.get_user_bookings(2, date(2026, 3, 1))
+
+    def test_get_user_bookings_valid_date_after(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+        self.backend.add_showing(1, date(2026, 3, 13))
+        self.backend.add_showing(1, date(2026, 3, 14))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 3, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 4, ["ADULT"])
+        self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
+
+        assert self.backend.get_user_bookings(1, date(2026, 3, 15)) == []
