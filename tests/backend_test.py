@@ -466,3 +466,23 @@ class TestMarkSeatUnavailable(Test):
 
         with pytest.raises(Exception):
             self.backend.mark_seat_unavailable("-1B", 1)
+
+class TestCheckShowingExists(Test):
+    def test_check_showing_exists_valid_true(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        assert self.backend._check_showing_exists(1) == True
+
+    def test_check_showing_exists_valid_false(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        assert self.backend._check_showing_exists(2) == False
+
+    def test_check_showing_exists_letter_showing_ID(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        with pytest.raises(Exception):
+            self.backend._check_showing_exists("ABC") == False

@@ -201,6 +201,30 @@ class Backend:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
 
+    def _check_showing_exists(self, showingID: int) -> bool:
+        """
+        Validates if a showing exists before booking to it or getting it's unavailable seats.
+        Returns true if exists and can be used, returns false if it doesn't exist
+        """
+        if str(showingID).isnumeric() == False:
+            logging.critical("ShowingID is not a number.")
+            raise Exception("ShowingID is not numeric.")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM dbo.Showings WHERE showingID = ?", (showingID))
+                showing = cursor.fetchone()
+
+                if showing == None:
+                    return False
+                else:
+                    return True
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+
     def get_unavailable_seats(self, showingID: int) -> list[str]:
         """
         Gets and returns a list of all the unavailable seats for the specified showing
