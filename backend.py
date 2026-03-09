@@ -275,7 +275,47 @@ class Backend:
         Checks if a seat is available.
         Used in the book_seat function
         """
-        pass
+        #TODO: test with bookings
+        if self._check_showing_exists(showingID) == False:
+            logging.critical("Showing does not exist")
+            raise Exception("Showing does not exist")
+        
+        if self._check_valid_seat_ID(seatID) == False:
+            logging.critical("Seat does not exist")
+            raise Exception("Seat does not exist")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting seat from unavailable seats...")
+                cursor.execute("SELECT performanceID FROM dbo.Showings WHERE showingID = ?", (showingID))
+                performanceID = cursor.fetchone()[0]
+
+                cursor.execute("SELECT seatID FROM dbo.PerformanceUnavailableSeats WHERE seatID = ? AND performanceID = ?", (seatID, performanceID))
+                seat = cursor.fetchone()
+
+                if seat != None:
+                    return False
+                
+                logging.debug("Getting seat from bookings...")
+                cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
+                bookings = cursor.fetchall()
+                bookings = f"({",".join(booking[0] for booking in bookings)})"
+
+                logging.debug(f"{bookings = }")
+
+                if bookings != "()":
+                    cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE seatID = ? AND bookingID IN ?", (seatID, bookings))
+                    booking = cursor.fetchone[0]
+
+                    if booking != None:
+                        return False
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return True
 
     def book_seat(self, seatID: str, showingID: int, seat_type: str) -> None:
         """

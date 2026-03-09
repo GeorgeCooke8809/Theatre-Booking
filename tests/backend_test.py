@@ -488,6 +488,7 @@ class TestCheckShowingExists(Test):
             self.backend._check_showing_exists("ABC") == False
 
 class TestGetUnavailableSeats(Test):
+    # TODO: test with bookings added
     def test_get_unavailable_seats_valid(self):
         self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
         self.backend.add_showing(1, date(2026, 3, 10))
@@ -506,3 +507,36 @@ class TestGetUnavailableSeats(Test):
         self.backend.add_showing(1, date(2026, 3, 10))
 
         assert self.backend.get_unavailable_seats(1) == []
+
+class TestCheckSeatAvailable(Test):
+    #TODO: test with bookings
+
+    def test_check_seat_available_valid_marked_unavailable_true(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        assert self.backend._check_seat_available("7G", 1) == True
+
+    def test_check_seat_available_valid_marked_unavailable_false(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        for seat in ["1A", "1B", "1C", "5H", "10T"]:
+            self.backend.mark_seat_unavailable(seat, 1)
+
+        assert self.backend._check_seat_available("1A", 1) == False
+        assert self.backend._check_seat_available("1B", 1) == False
+        assert self.backend._check_seat_available("1C", 1) == False
+        assert self.backend._check_seat_available("5H", 1) == False
+        assert self.backend._check_seat_available("10T", 1) == False
+
+    def test_check_seat_available_invalid_showing(self):
+        with pytest.raises(Exception):
+            self.backend._check_seat_available("1A", 1)
+
+    def test_check_seat_available_invalid_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        with pytest.raises(Exception):
+            self.backend._check_seat_available("11A", 1)
