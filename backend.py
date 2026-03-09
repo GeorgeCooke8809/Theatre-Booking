@@ -180,7 +180,6 @@ class Backend:
         """
         Marks the specified seat as unavailable for the specified performance
         """
-        #TODO: Implement mark_seat_unavailable
         if self._check_valid_seat_ID(seatID) == False:
             logging.critical("Invalid seatID given.")
             raise Exception("Invalid seatID given.")
@@ -535,9 +534,9 @@ class Backend:
             
         return next_id
 
-    def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, list[str]]]:
+    def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, int, list[str]]]:
         """
-        Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, showing attendees (names): list)]
+        Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, empty seats: int, showing attendees (names): list)]
         The showing attendees will be made up of the following tuples [(userID, user first name, user last name, user phone)] and will be sorted by ascending surname alphabetically
         """
         #TODO: Implement - admin_get_showings
@@ -551,7 +550,7 @@ class Backend:
                 cursor = connection.cursor()
 
                 logging.debug(f"Getting showings for {performanceID}...")
-                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ? ORDER BY showingDate ACS", (performanceID))
+                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ? ORDER BY showingDate ASC", (performanceID))
                 showings_result = cursor.fetchall()
 
                 showings = []
@@ -560,6 +559,7 @@ class Backend:
                     showingID = showing[0]
                     showing_date = showing[1]
                     showing_date = showing_date.strftime("%A %d %B, %Y") # this likely won't work on the college servers because of different SQL versions
+                    remaining_seats = 200
 
                     cursor.execute("SELECT userID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                     users_result = cursor.fetchall()
@@ -570,7 +570,9 @@ class Backend:
                         userID = user[0]
                         
                         cursor.execute("SELECT fName, lName, phone FROM dbo.Users WHERE userID = ?", (userID))
-                        user_details = cursor.fetchone()[0]
+                        user_details = cursor.fetchone()
+
+                        logging.debug(f"{user_details = }")
 
                         user_first_name = user_details[0]
                         user_last_name = user_details[1]
@@ -580,7 +582,11 @@ class Backend:
 
                     attendees.sort(key=lambda x:x[2])
 
-                    showings.append((showingID, showing_date, attendees))
+                    remaining_seats -= len(self.get_unavailable_seats(showingID))
+
+                    showings.append((showingID, showing_date, remaining_seats, attendees))
+
+                logging.debug(f"{showings = }")
 
                 return showings
             else:

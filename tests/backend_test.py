@@ -694,3 +694,55 @@ class TestBookSeats(Test):
 
         with pytest.raises(Exception):
             self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+
+class TestAdminGetShowings(Test):
+    def test_admin_get_showings_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.book_seats(2, ["2A"], 1, ["ADULT"])
+
+
+        self.backend.add_showing(1, date(2026, 3, 11))
+
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+
+        self.backend.book_seats(2, ["2A"], 2, ["ADULT"])
+
+        assert self.backend.admin_get_showings(1) == [(1, "Tuesday 10 March, 2026", 198, [(1, "George", "Cooke", "07802 447089"), (2, "Akil", "Rameez", "07802 447089")]), (2, "Wednesday 11 March, 2026", 198, [(1, "George", "Cooke", "07802 447089"), (2, "Akil", "Rameez", "07802 447089")])]
+
+    def test_admin_get_showings_valid_with_unavailable_Seats(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.mark_seat_unavailable("5C", 1)
+        self.backend.mark_seat_unavailable("10B", 1)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
+
+        self.backend.create_user("Akil", "Rameez", "25rameeza110@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+        self.backend.book_seats(2, ["2A"], 1, ["ADULT"])
+
+
+        self.backend.add_showing(1, date(2026, 3, 11))
+
+        self.backend.book_seats(1, ["1A"], 2, ["ADULT"])
+
+        self.backend.book_seats(2, ["2A"], 2, ["ADULT"])
+
+        assert self.backend.admin_get_showings(1) == [(1, "Tuesday 10 March, 2026", 196, [(1, "George", "Cooke", "07802 447089"), (2, "Akil", "Rameez", "07802 447089")]), (2, "Wednesday 11 March, 2026", 196, [(1, "George", "Cooke", "07802 447089"), (2, "Akil", "Rameez", "07802 447089")])]
+
+    def test_admin_get_showings_valid_no_attendees(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        assert self.backend.admin_get_showings(1) == [(1, "Tuesday 10 March, 2026", 200, [])]
+
+    def test_admin_get_showings_invalid_showingID(self):
+        with pytest.raises(Exception):
+            self.backend.admin_get_showings(1)
