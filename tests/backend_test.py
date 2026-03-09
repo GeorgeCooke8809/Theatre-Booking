@@ -842,3 +842,7 @@ class TestGetUserBookings(Test):
         self.backend.book_seats(1, ["1A"], 5, ["ADULT"])
 
         assert self.backend.get_user_bookings(1, date(2026, 3, 15)) == []
+
+class TestGetPerformances(Test):
+    # TODO: test
+    pass

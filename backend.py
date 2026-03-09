@@ -144,15 +144,44 @@ class Backend:
         Returns in the format [(performanceID, performance title)]
         """
         #TODO: Implement - get_all_performances
-        pass
+        if type(date_from) != datetime.date:
+            logging.critical("Date_from given is not datetime.date")
+            raise Exception("Date_from given is not datetime.date")
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting performances...")
+                cursor.execute("SELECT performanceID, title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingDate >= ?)", (date_from))
+                performance_sql = cursor.fetchall()
+
+                performances = [(performance[0], performance[1]) for performance in performance_sql]
+
+                logging.debug(f"{performances = }")
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        return performances
 
     def get_all_performance_showings(self, performanceID: int) -> list[tuple[str, str]]:
         """
         Gets and returns a list of all showings for a performance.
-        Returns in the format [[showingID: int, showing date: str]]
+        Returns in the format [(showingID: int, showing date: str)]
         """
         #TODO: Implement - get_all_performance_showings
-        pass
+        with self._connection() as connection:
+            next_id = self._get_next_ID("PerformanceUnavailableSeats")
+
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Marking seat as unavailable...")
+                cursor.execute("INSERT INTO dbo.PerformanceUnavailableSeats VALUES(?, ?, ?)", (next_id, performanceID, seatID))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def _check_valid_seat_ID(self, seatID: str) -> bool:
         """
