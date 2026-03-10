@@ -143,7 +143,6 @@ class Backend:
         Gets and returns a list of all performances from and including the date provided sorted by ascending date.
         Returns in the format [(performanceID, performance title)]
         """
-        #TODO: Implement - get_all_performances
         if type(date_from) != datetime.date:
             logging.critical("Date_from given is not datetime.date")
             raise Exception("Date_from given is not datetime.date")

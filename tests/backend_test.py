@@ -843,6 +843,57 @@ class TestGetUserBookings(Test):
 
         assert self.backend.get_user_bookings(1, date(2026, 3, 15)) == []
 
-class TestGetPerformances(Test):
+class TestGetAllPerformances(Test):
     # TODO: test
-    pass
+    def test_get_all_performances_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        assert self.backend.get_all_performances(date(2026, 3, 1)) == [(1, "Lorem Ipsum")]
+
+    def test_get_all_performances_valid_multiple_performances(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(2, date(2026, 3, 11))
+
+        assert self.backend.get_all_performances(date(2026, 3, 1)) == [(1, "Lorem Ipsum"), (2, "Lorem Ipsumm")]
+
+    def test_get_all_performances_valid_multiple_showings_after_date(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+
+        assert self.backend.get_all_performances(date(2026, 3, 1)) == [(1, "Lorem Ipsum")]
+
+    def test_get_all_performances_valid_multiple_performances_one_old(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 2, 10))
+
+        self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(2, date(2026, 3, 11))
+
+        assert self.backend.get_all_performances(date(2026, 3, 1)) == [(2, "Lorem Ipsumm")]
+
+    def test_get_all_performances_valid_none(self):
+        assert self.backend.get_all_performances(date(2026, 3, 1)) == []
+
+    def test_get_all_performances_valid_multiple_performances_outdated(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(2, date(2026, 3, 11))
+
+        assert self.backend.get_all_performances(date(2026, 4, 1)) == []
+
+    def test_get_all_performances_invalid_date_format(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.add_performance("Lorem Ipsumm", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(2, date(2026, 3, 11))
+
+        with pytest.raises(Exception):
+            self.backend.get_all_performances("01/03/2026")
