@@ -169,18 +169,31 @@ class Backend:
         Gets and returns a list of all showings for a performance.
         Returns in the format [(showingID: int, showing date: str)]
         """
-        #TODO: Implement - get_all_performance_showings
-        with self._connection() as connection:
-            next_id = self._get_next_ID("PerformanceUnavailableSeats")
+        # Do I want this to be from a certain date?
+        # Should it only show showings with available seats?
+        if self._check_performance_exists(performanceID) == False:
+            logging.critical("Performance does not exist, cannot get showings")
+            raise Exception("Performance does not exist, cannot get showings")
 
+        with self._connection() as connection:
             if connection is not None:
                 cursor = connection.cursor()
 
-                logging.debug("Marking seat as unavailable...")
-                cursor.execute("INSERT INTO dbo.PerformanceUnavailableSeats VALUES(?, ?, ?)", (next_id, performanceID, seatID))
+                logging.debug("Getting showings...")
+                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ?", (performanceID))
+                results = cursor.fetchall()
+
+                showings = []
+
+                for showing in results:
+                    showingID = showing[0]
+                    showing_date = showing[1].strftime("%A %d %B, %Y")
+                    showings.append((showingID, showing_date))
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
+            
+        return showings
 
     def _check_valid_seat_ID(self, seatID: str) -> bool:
         """

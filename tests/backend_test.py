@@ -897,3 +897,21 @@ class TestGetAllPerformances(Test):
 
         with pytest.raises(Exception):
             self.backend.get_all_performances("01/03/2026")
+
+class TestGetAllPerformanceShowings(Test):
+    def test_get_all_performance_showings_valid(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+        self.backend.add_showing(1, date(2026, 3, 11))
+        self.backend.add_showing(1, date(2026, 3, 12))
+
+        assert self.backend.get_all_performance_showings(1) == [(1, "Tuesday 10 March, 2026"), (2, "Wednesday 11 March, 2026"), (3, "Thursday 12 March, 2026")]
+
+    def test_get_all_performance_showings_valid_no_showings(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+
+        assert self.backend.get_all_performance_showings(1) == []
+
+    def test_get_all_performance_showings_invalid_performance(self):
+        with pytest.raises(Exception):
+            self.backend.get_all_performance_showings(1)
