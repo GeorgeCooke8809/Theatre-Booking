@@ -11,5 +11,22 @@ async function checkPassword(email, password){
             body: JSON.stringify({"email": email, "password": password})
             });
 
-    console.log(response.json())
+    correctness = response.json()
+    console.log(correctness)
+
+    if (correctness.correct){}
+    else{
+        console.log("Login is incorrect, showing flash message")
+        const container = document.getElementById("flash-container");
+
+        const msg = document.createElement("div");
+        msg.className = "flash-message";
+        msg.textContent = "That username or password is incorrect.";
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+            msg.remove();
+        }, 3000);
+    }
 }

@@ -1,7 +1,7 @@
 from backend import Backend
 import logging
 import flask
-from flask import Flask, request, redirect, url_for, send_from_directory
+from flask import Flask, request, redirect, url_for, send_from_directory, flash
 from api import api
 
 logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
 
 app = Flask(__name__)
 app.register_blueprint(api, url_prefix="/api")
+app.secret_key = 'super secret'
 
 global data
 data = Backend(database="PERSONAL")
