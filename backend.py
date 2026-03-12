@@ -589,7 +589,7 @@ class Backend:
         performance_name = Paragraph(f"{performance_title}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
+            fontName="Helvetica",
             fontSize=35
         ))
         doc_build_string.extend([performance_name, Spacer(1, 30)])
@@ -597,57 +597,57 @@ class Backend:
         date_paragraph = Paragraph(f"{date}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
-            fontSize=35
+            fontName="Helvetica",
+            fontSize=20
         ))
         doc_build_string.extend([date_paragraph, Spacer(1, 30)])
         
         name_paragraph = Paragraph(f"{name}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
+            fontName="Helvetica",
             fontSize=35
         ))
-        doc_build_string.extend([name_paragraph, Spacer(1, 30)])
+        doc_build_string.extend([name_paragraph, Spacer(1, 50)])
 
         for seat in seats:
             seat_paragraph = Paragraph(f"{seat[0]} - {seat[1]}", style=ParagraphStyle(
                 "LeftAligned",
                 alignment=TA_LEFT,
-                fontName="Helvetica-Bold",
-                fontSize=35
+                fontName="Helvetica",
+                fontSize=15
             ))
-            doc_build_string.extend([seat_paragraph, Spacer(1, 30)])
+            doc_build_string.extend([seat_paragraph, Spacer(1, 10)])
 
         children_paragraph = Paragraph(f"Child Seats: {child_seats}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
-            fontSize=35
+            fontName="Helvetica",
+            fontSize=20
         ))
-        doc_build_string.extend([children_paragraph, Spacer(1, 30)])
+        doc_build_string.extend([Spacer(1, 20), children_paragraph, Spacer(1, 15)])
 
         adult_paragraph = Paragraph(f"Adult Seats: {adult_seats}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
-            fontSize=35
+            fontName="Helvetica",
+            fontSize=20
         ))
-        doc_build_string.extend([adult_paragraph, Spacer(1, 30)])
+        doc_build_string.extend([adult_paragraph, Spacer(1, 15)])
 
         elderly_paragraph = Paragraph(f"Elderly Seats: {elderly_seats}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
-            fontName="Helvetica-Bold",
-            fontSize=35
+            fontName="Helvetica",
+            fontSize=20
         ))
-        doc_build_string.extend([elderly_paragraph, Spacer(1, 30)])
+        doc_build_string.extend([elderly_paragraph, Spacer(1, 15)])
 
         total_paid_paragraph = Paragraph(f"Total Paid: {price}", style=ParagraphStyle(
             "LeftAligned",
             alignment=TA_LEFT,
             fontName="Helvetica-Bold",
-            fontSize=35
+            fontSize=20
         ))
         doc_build_string.extend([total_paid_paragraph, Spacer(1, 30)])
 

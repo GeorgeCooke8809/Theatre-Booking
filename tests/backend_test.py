@@ -926,3 +926,13 @@ class TestGeneratePDF(Test):
         self.backend.book_seats(1, ["1A"], 1, ["ADULT"])
 
         self.backend.generate_pdf(1)
+
+    def test_generate_ticket_valid_multiple_seat(self):
+        self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
+        self.backend.add_showing(1, date(2026, 3, 10))
+
+        self.backend.create_user("George", "Cooke", "25cookeg899@collyers.ac.uk", "07802 447089", "SuperPassword123*")
+
+        self.backend.book_seats(1, ["1A", "1B", "1C"], 1, ["ADULT", "CHILD", "ELDERLY"])
+
+        self.backend.generate_pdf(1)
