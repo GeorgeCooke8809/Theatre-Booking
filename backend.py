@@ -1,6 +1,12 @@
 import pyodbc
 import logging
 import datetime
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors as colours
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+from reportlab.platypus import Spacer, Paragraph, Table, SimpleDocTemplate
 
 class Backend:
     def __init__(self, database:str = "COLLEGE") -> None:
@@ -505,7 +511,147 @@ class Backend:
         Generates and saves a PDF ticket for the specified booking
         """
         #TODO: Implement - generate_pdf
-        pass
+        """
+        Needed information:
+            - Performance title,
+            - Showing date,
+            - User name,
+            - Seat compositions,
+                - Seat IDs,
+            - Total paid,
+        """
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting ticket information...")
+                cursor.execute("SELECT showingID FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
+                showingID = cursor.fetchone()[0]
+
+                logging.debug(f"{showingID = }")
+
+                cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = ?", (showingID))
+                date = cursor.fetchone()[0]
+                date = date.strftime("%A %d %B, %Y")
+
+                logging.debug(f"{date = }")
+
+                cursor.execute("SELECT title, performanceID FROM dbo.Performances WHERE performanceID = (SELECT performanceID FROM dbo.Showings WHERE showingID = ?)", (showingID))
+                sql_response  = cursor.fetchone()
+
+                logging.debug(f"{sql_response = }")
+
+                performance_title = sql_response[0]
+                performanceID = sql_response[1]
+
+                cursor.execute("SELECT fName, lName FROM dbo.Users WHERE userID = (SELECT userID FROM dbo.Bookings WHERE bookingID = ?)", (bookingID))
+                sql_response = cursor.fetchone()
+                name = f"{sql_response[0]} {sql_response[1]}"
+
+                cursor.execute("SELECT seatID, bookingType FROM dbo.BookingSeats WHERE bookingID = ?", (bookingID))
+                seats = cursor.fetchall()
+                
+                adult_seats = 0
+                child_seats = 0
+                elderly_seats = 0
+                
+                for seat in seats:
+                    if seat[1] == "ADULT":
+                        adult_seats += 1
+                    elif seat[1] == "CHILD":
+                        child_seats += 1
+                    elif seat[1] == "ELDERLY":
+                        elderly_seats += 1
+                    else:
+                        logging.critical("Invalid seat type.")
+                        raise Exception("Invalid seat type.")
+                    
+                cursor.execute("SELECT userID FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
+                userID = cursor.fetchone()[0]
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+            
+        price = self.get_booking_price(userID, performanceID, child_seats, adult_seats, elderly_seats)
+        
+        doc = SimpleDocTemplate("Ticket.pdf", pagesize = A4)
+        doc_build_string = []
+
+        title = Paragraph(f"Collyer's Event Ticket", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([title, Spacer(1, 30)])
+
+        performance_name = Paragraph(f"{performance_title}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([performance_name, Spacer(1, 30)])
+
+        date_paragraph = Paragraph(f"{date}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([date_paragraph, Spacer(1, 30)])
+        
+        name_paragraph = Paragraph(f"{name}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([name_paragraph, Spacer(1, 30)])
+
+        for seat in seats:
+            seat_paragraph = Paragraph(f"{seat[0]} - {seat[1]}", style=ParagraphStyle(
+                "LeftAligned",
+                alignment=TA_LEFT,
+                fontName="Helvetica-Bold",
+                fontSize=35
+            ))
+            doc_build_string.extend([seat_paragraph, Spacer(1, 30)])
+
+        children_paragraph = Paragraph(f"Child Seats: {child_seats}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([children_paragraph, Spacer(1, 30)])
+
+        adult_paragraph = Paragraph(f"Adult Seats: {adult_seats}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([adult_paragraph, Spacer(1, 30)])
+
+        elderly_paragraph = Paragraph(f"Elderly Seats: {elderly_seats}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([elderly_paragraph, Spacer(1, 30)])
+
+        total_paid_paragraph = Paragraph(f"Total Paid: {price}", style=ParagraphStyle(
+            "LeftAligned",
+            alignment=TA_LEFT,
+            fontName="Helvetica-Bold",
+            fontSize=35
+        ))
+        doc_build_string.extend([total_paid_paragraph, Spacer(1, 30)])
+
+        doc.build(doc_build_string)
 
     def _validate_new_performance_prices(self, child_price: float, adult_price: float, elderly_price: float) -> bool:
         """
