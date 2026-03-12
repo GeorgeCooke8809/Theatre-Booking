@@ -506,6 +506,26 @@ class Backend:
             
         return bookings
 
+    def _check_booking_exists(self, bookingID: int):
+        """
+        Validates that a booking exists before generating its PDF ticket.
+        Returns true if does exist and can be used, false if not
+        """
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
+                booking = cursor.fetchone()
+
+                if booking == None:
+                    return False
+                else:
+                    return True
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+
     def generate_pdf(self, bookingID: int) -> None:
         """
         Generates and saves a PDF ticket for the specified booking
@@ -520,6 +540,9 @@ class Backend:
                 - Seat IDs,
             - Total paid,
         """
+        if self._check_booking_exists(bookingID) == False:
+            logging.critical("Booking does not exist, cannot generate ticket.")
+            raise Exception("Booking does not exist, cannot generate ticket.")
 
         with self._connection() as connection:
             if connection is not None:
