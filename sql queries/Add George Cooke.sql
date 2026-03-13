@@ -1,1 +1,0 @@
-INSERT INTO dbo.Users VALUES(1, 'George', 'Cooke', '25cookeg899@collyers.ac.uk', 'SuperPassword123', '07802 447089', 'ADMIN');
