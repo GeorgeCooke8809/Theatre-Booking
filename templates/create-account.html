@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Create Account</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/create-account.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/create-account.js"></script>
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <body>
+        <form id="create-account-form" onsubmit=createAccount()>
+            <h1 id="title">Create Account</h1>
+
+            <div id="columns">
+                <div class="column" id="left-column">
+                    <label for="fName">First Name:</label>
+                    <input class="create-account-text" id="fName" type="text" autocomplete="given-name"><br>
+                    <label for="lName">Last Name:</label>
+                    <input class="create-account-text" id="lName" type="text" autocomplete="family-name"><br>
+                    <label for="phone-number">Phone Number:</label>
+                    <input class="create-account-text" id="phone-number" type="text"><br>
+                </div>
+
+                <div class="column" id="right-column">
+                    <label for="email">Email:</label>
+                    <input class="create-account-text" id="email" type="text" autocomplete="email"><br>
+                    <label for="password">Password:</label>
+                    <input class="create-account-text" id="password" type="password" autocomplete="new-password"><br>  
+                    <label for="repeat-password">Repeat Password:</label>
+                    <input class="create-account-text" id="repeat-password" type="password" autocomplete="current-password"><br> 
+                </div>
+            </div>
+
+            <input id="submit" type="submit" value="Sign In">
+        </form>
+
+        <div id="flash-container"></div>
+    </body>
+</html>
