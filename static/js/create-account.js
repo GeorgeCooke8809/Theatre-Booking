@@ -1,40 +1,35 @@
-async function createAccount(email, password){
+async function createAccount(){
     event.preventDefault()
-    var email = document.querySelector("#username").value;
-    console.log(email);
+    var fname = document.querySelector("#fName").value;
+    var lname = document.querySelector("#lName").value;
+    var phone = document.querySelector("#phone-number").value;
+    var email = document.querySelector("#email").value;
     var password = document.querySelector("#password").value;
-    console.log(password);
+    var repeatPassword = document.querySelector("#repeat-password").value;
 
-    response = await fetch("/api/check-login-details", {
+    response = await fetch("/api/create-account", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({"email": email, "password": password})
+            body: JSON.stringify({
+                "fName": fname,
+                "lName": lname,
+                "email": email,
+                "phone": phone,
+                "password": password,
+                "repeatPassword": repeatPassword
+            })
             });
 
-    correctness = (await response.json())
-    console.log(correctness)
+    response_json = await response.json()
+    console.log(response)
 
-    if (correctness.correct){
-            if(correctness.userType == "ADMIN"){
-                console.log("Redirecting to admin dashboard...")
-                window.location.replace("./admin-dashboard")
-            }
-            else{
-                console.log("Redirecting to visitor dashboard...")
-                window.location.replace(`./visitor-dashboard?uid=${correctness.userID}`)
-            }}
+    if (response_json.code == 200){
+        console.log("Information correct, redirecting.")
+        window.location.replace("./account-created")
+    }
     else{
-        console.log("Login is incorrect, showing flash message")
-        const container = document.getElementById("flash-container");
-
-        const msg = document.createElement("div");
-        msg.className = "flash-message";
-        msg.textContent = "That username or password is incorrect.";
-
-        container.appendChild(msg);
-
-        setTimeout(() => {
-            msg.remove();
-        }, 3000);
+        console.log("Information incorrect, flashing error.")
+        
+        flashMessage(response_json.message)
     }
 }

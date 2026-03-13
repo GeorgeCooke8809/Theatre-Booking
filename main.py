@@ -25,6 +25,10 @@ def login_page():
 def create_account_page():
     return flask.render_template("create-account.html")
 
+@app.route("/account-created", methods = ["GET"])
+def account_created_page():
+    return flask.render_template("account-created.html")
+
 # --------------------------- Visitor Sections ---------------------------
 
 @app.route("/visitor-dashboard", methods = ["GET"])

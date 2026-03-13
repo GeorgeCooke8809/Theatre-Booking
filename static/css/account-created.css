@@ -1,0 +1,44 @@
+#title{
+    font-size: 60px;
+    font-weight: lighter;
+
+    padding: 10px;
+    margin: 0px;
+}
+
+#border{
+    width: 600px;
+    height: 410px;
+
+    border-style: solid;
+    border-width: 2px;
+    border-color: #000000;
+    border-radius: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
+
+a{
+    all: unset;
+
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+
+    padding: 10px;
+
+    font-size: 30px;
+
+    border-style: solid;
+    border-color: #000000;
+    border-width: 2px;
+
+    border-radius: 1rem;
+
+    justify-content: center;
+
+    cursor: pointer;
+}
