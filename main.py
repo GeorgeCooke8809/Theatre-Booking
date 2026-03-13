@@ -14,10 +14,18 @@ app.secret_key = 'super secret'
 global data
 data = Backend(database="PERSONAL")
 
+# --------------------------- Log In Page ---------------------------
+
 @app.route("/", methods = ["GET"])
 @app.route("/login", methods = ["GET"])
 def login_page():
     return flask.render_template("login.html")
+
+@app.route("/create-account", methods = ["GET"])
+def create_account_page():
+    return flask.render_template("create-account.html")
+
+# --------------------------- Visitor Sections ---------------------------
 
 @app.route("/visitor-dashboard", methods = ["GET"])
 def visitor_dashboard():
@@ -26,6 +34,8 @@ def visitor_dashboard():
     if userID == "None":
         return redirect("/")
     return f"<h1>Visitor Dashboard - {userID = }</h1>"
+
+# --------------------------- Admin Sections ---------------------------
 
 @app.route("/admin-dashboard", methods = ["GET"])
 def admin_dashboard():

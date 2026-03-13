@@ -1,4 +1,4 @@
-async function checkPassword(email, password){
+async function createAccount(email, password){
     event.preventDefault()
     var email = document.querySelector("#username").value;
     console.log(email);
@@ -24,6 +24,17 @@ async function checkPassword(email, password){
                 window.location.replace(`./visitor-dashboard?uid=${correctness.userID}`)
             }}
     else{
-        flashMessage("That username or password is incorrect.")
+        console.log("Login is incorrect, showing flash message")
+        const container = document.getElementById("flash-container");
+
+        const msg = document.createElement("div");
+        msg.className = "flash-message";
+        msg.textContent = "That username or password is incorrect.";
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+            msg.remove();
+        }, 3000);
     }
 }
