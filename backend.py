@@ -80,27 +80,32 @@ class Backend:
 
         return new_ID
 
-    def check_password(self, email: str, password_attempt: str) -> tuple[bool, int]:
+    def check_password(self, email: str, password_attempt: str) -> tuple[bool, int, str]:
         """
-        Checks if the entered password is correct for the email. Then returns a tuple with if the password is correct and (if correct) the relevant userID.
+        Checks if the entered password is correct for the email. Then returns a tuple with if the password is correct and (if correct) the relevant userID and user type.
+        Universal admin login is email: "ADMIN", password: "AdminPassword123"
         """
+        if email == "ADMIN" and password_attempt == "AdminPassword123":
+            return (True, 0, "ADMIN")
+
         with self._connection() as connection:
             if connection is not None:
                 cursor = connection.cursor()
 
-                cursor.execute("SELECT password, userID FROM dbo.Users WHERE email = ?", (email))
+                cursor.execute("SELECT password, userID, userType FROM dbo.Users WHERE email = ?", (email))
                 sql_response = cursor.fetchone()
 
                 if sql_response == None: # Email not in database
-                    return (False, 0)
+                    return (False, 0, "")
                 
                 correct_password = sql_response[0]
                 userID = sql_response[1]
+                user_type = sql_response[2]
 
-                if correct_password[0] == password_attempt:
-                    return (True, userID)
+                if correct_password == password_attempt:
+                    return (True, userID, user_type)
                 else: # Incorrect password
-                    return (False, 0)
+                    return (False, 0, "")
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")

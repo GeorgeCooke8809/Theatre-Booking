@@ -11,10 +11,18 @@ async function checkPassword(email, password){
             body: JSON.stringify({"email": email, "password": password})
             });
 
-    correctness = response.json()
+    correctness = (await response.json())
     console.log(correctness)
 
-    if (correctness.correct){}
+    if (correctness.correct){
+            if(correctness.userType == "ADMIN"){
+                console.log("Redirecting to admin dashboard...")
+                window.location.replace("./admin-dashboard")
+            }
+            else{
+                console.log("Redirecting to visitor dashboard...")
+                window.location.replace(`./visitor-dashboard?uid=${correctness.userID}`)
+            }}
     else{
         console.log("Login is incorrect, showing flash message")
         const container = document.getElementById("flash-container");

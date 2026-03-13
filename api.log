@@ -1,11 +1,2 @@
-2026-03-12 15:37:22,291 - WARNING -  * Debugger is active!
-2026-03-12 15:37:22,297 - INFO -  * Debugger PIN: 278-651-091
-2026-03-12 15:37:24,806 - INFO - 127.0.0.1 - - [12/Mar/2026 15:37:24] "GET / HTTP/1.1" 200 -
-2026-03-12 15:37:25,106 - INFO - 127.0.0.1 - - [12/Mar/2026 15:37:25] "[36mGET /static/css/common.css HTTP/2026-03-12 15:37:43,655 - INFO -  * Restarting with stat
-2026-03-12 15:39:23,099 - INFO -  * Restarting with stat
-2026-03-12 15:39:25,641 - INFO -  * Restarting with stat
-2026-03-12 15:39:33,243 - INFO -  * Restarting with stat
-gin.js HTTP/1.1[0m" 304 -
-2026-03-12 15:37:25,215 - INFO - 127.0.0.1 - - [12/Mar/2026 15:37:25] "[36mGET /static/img/favicon.ico HTTP/1.1[0m" 304 -
-2026-03-12 15:37:28,438 - INFO - 127.0.0.1 - - [12/Mar/2026 15:37:28] "[31m[1mPOST /api/check-login-details HTTP/1.1[0m" 415 -
-2026-03-12 15:37:43,530 - INFO -  * Detected change in 'c:\\Users\\georg\\OneDrive - The College of Richard Collyer\\01 - Computer Science\\Python Projects\\Theatre-Booking\\api.py', reloading
+2026-03-13 09:32:40,455 - WARNING -  * Debugger is active!
+2026-03-13 09:32:40,463 - INFO -  * Debugger PIN: 278-651-091

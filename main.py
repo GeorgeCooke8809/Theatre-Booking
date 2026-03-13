@@ -20,7 +20,11 @@ def login_page():
     return flask.render_template("login.html")
 
 @app.route("/visitor-dashboard", methods = ["GET"])
-def visitor_dashboard(userID):
+def visitor_dashboard():
+    userID = flask.request.args.get("uid", default="None", type=int)
+
+    if userID == "None":
+        return redirect("/")
     return f"<h1>Visitor Dashboard - {userID = }</h1>"
 
 @app.route("/admin-dashboard", methods = ["GET"])
