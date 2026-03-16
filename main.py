@@ -14,7 +14,7 @@ app.secret_key = 'super secret'
 global data
 data = Backend(database="PERSONAL")
 
-# --------------------------- Log In Page ---------------------------
+# --------------------------- Login Page ---------------------------
 
 @app.route("/", methods = ["GET"])
 @app.route("/login", methods = ["GET"])
@@ -52,6 +52,8 @@ def admin_add_event():
 @app.route("/admin-users", methods = ["GET"])
 def admin_users():
     return "<h1> Admin Users </h1>"
+
+# --------------------------- Main Running ---------------------------
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

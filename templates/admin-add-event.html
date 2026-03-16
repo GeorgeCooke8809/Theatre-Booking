@@ -6,10 +6,10 @@
         <title>Collyer's Theatre Booking - Admin Add Event</title>
 
         <link rel="stylesheet" type="text/css" href="static/css/common.css">
-        <link rel="stylesheet" type="text/css" href="static/css/admin-dashboard.css">
+        <link rel="stylesheet" type="text/css" href="static/css/admin-add-event.css">
         <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
 
-        <script defer src="static/js/admin-dashboard.js"></script>
+        <script defer src="static/js/admin-add-event.js"></script>
         <script defer src="static/js/common.js"></script>
     </head>
 
@@ -26,8 +26,27 @@
 
     <body>
         <div id="header-spacer"></div>
-        <a id="add-event" href="./admin-add-event">Add Event</a>
         
+        <div id="columns">
+            <div id="left-column">
+                <h1>Add Event:</h1>
+                <h2>Select Unavailable Seats:</h2>
+
+                <div id="seats">
+                    {% for i in range(1, 11): %}
+                        <div class="seat-row">
+                            {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T"]: %}
+                                <button class="seat-button available-seat" value="{{ i }}{{ j }}">{{ i }}{{ j }}</button>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="right-column">
+
+            </div>
+        </div>
 
         <div id="flash-container"></div>
     </body>
