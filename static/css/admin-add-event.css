@@ -38,12 +38,34 @@ h2{
     font-weight: lighter;
 }
 
+#screen{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    color: #dcdbdb;
+    background-color: #313131;
+    border-radius: 0.5rem;
+    font-size: 30px;
+    padding: 20px 0px;
+    margin: 10px 0px;
+    margin-bottom: 15px;
+}
+
 #seats{
     display: flex;
     flex-direction: column;
     width: 100%;
     justify-content: center;
     align-items: center;
+}
+
+.isle{
+    width: 4.75%;
+    aspect-ratio: 1/1;
+    min-width: 30px;
+    min-height: 30px;;
 }
 
 .seat-row{
@@ -61,14 +83,14 @@ h2{
     align-items: center;
     justify-content: center;
 
-    width: 5%;
+    width: 4.75%;
     aspect-ratio: 1/1;
     min-width: 30px;
     min-height: 30px;
 
     border-radius: 1rem;
 
-    font-size: 20px;
+    font-size: 18px;
 
     margin: 5px;
 
@@ -85,9 +107,84 @@ h2{
     background-color: #bfbfbf;
 }
 
+.unavailable-seat{
+    color: #dcdbdb;
+
+    background-color: #313131;
+}
+
+.unavailable-seat:hover{
+    background-color: #414141;
+}
+
 #right-column{
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
 
     width: 40%;
     height: 100%;
+
+    padding: 15px;
+}
+
+p{
+    font-size: 25px;
+    margin: 3px 0px;
+}
+
+#name-text{
+    padding-right: 15px;
+}
+
+#name{
+    width: 100%;
+}
+
+#description-text{
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#description{
+    text-wrap: pretty;
+    resize: vertical;
+    padding: 10px;
+    height: 2100%;
+}
+
+input{
+    padding: 5px;
+    border-radius: 0.5rem;
+    border-width: 1px;
+}
+
+.inline-entry{
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+}
+
+#submit{
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    text-align: center;
+
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #182041;
+    color: white;
+
+    border-radius: 1rem;
+
+    font-size: 30px;
+    font-weight: bolder;
+
+    cursor: pointer;
+}
+
+#submit:hover{
+    background-color: #222c56;
 }

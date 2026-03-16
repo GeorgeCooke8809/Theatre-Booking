@@ -32,20 +32,51 @@
                 <h1>Add Event:</h1>
                 <h2>Select Unavailable Seats:</h2>
 
+                <div id="screen">Stage/Screen</div>
+
                 <div id="seats">
                     {% for i in range(1, 11): %}
                         <div class="seat-row">
                             {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T"]: %}
                                 <button class="seat-button available-seat" value="{{ i }}{{ j }}">{{ i }}{{ j }}</button>
+
+                                {% if j == "J": %}
+                                    <div class="isle"></div>
+                                {% endif %}
                             {% endfor %}
                         </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <div id="right-column">
+            <form id="right-column" onsubmit=addEvent()>
+                <div class="inline-entry">
+                    <p id="name-text" for="name">Name:</p>
+                    <input id="name" type="text"><br>
+                </div>
 
-            </div>
+                <p id="description-text" for="description">Description:</p>
+                <textarea id="description"></textarea><br>
+
+                <div class="inline-entry">
+                    <p for="adultPrice">Adult Price: £</p>
+                    <input id="adultPrice" type="number" step="0.01" value="10.00"><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="childPrice">Child Price: £</p>
+                    <input id="childPrice" type="number" step="0.01" value="5.00"><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="elderlyPrice">Elderly Price: £</p>
+                    <input id="elderlyPrice" type="number" step="0.01" value="5.00"><br>
+                </div>
+
+                <input id="submit" type="submit" value="Add Event">
+
+                <p class="note">* Note: you will still have to add showings of the event from the main dashboard.</p>
+            </form>
         </div>
 
         <div id="flash-container"></div>
