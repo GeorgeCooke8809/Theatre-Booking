@@ -43,7 +43,15 @@ def visitor_dashboard():
 
 @app.route("/admin-dashboard", methods = ["GET"])
 def admin_dashboard():
-    return f"<h1>Admin Dashboard</h1>"
+    return flask.render_template("admin-dashboard.html")
+
+@app.route("/admin-add-event", methods = ["GET"])
+def admin_add_event():
+    return flask.render_template("admin-add-event.html")
+
+@app.route("/admin-users", methods = ["GET"])
+def admin_users():
+    return "<h1> Admin Users </h1>"
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

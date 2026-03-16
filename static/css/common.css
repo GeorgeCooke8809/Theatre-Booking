@@ -1,11 +1,71 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
-    width: 80vh;
-    height: 100vh;
+    width: 80vw;
     margin: auto;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+}
+
+header{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
+    background-color: #182041;
+}
+
+#navigation-bar{
+    padding: 10px 7px;
+}
+
+#navigation-bar ul{
+    display: flex;
     align-items: center;
+    padding: 0rem;
+    padding-right: 10px;
+    margin: 0rem;
+    height: 50px;
+
+    justify-content: space-between;
+}
+
+#navigation-bar li{
+    all: unset;
+
+    padding: 8px;
+}
+
+.nav-button{
+    all: unset;
+
+    display: flex;
+    align-items: center;
+
+    color: white;
+    font-size: 40px;
+    font-weight: bolder;
+
+    cursor: pointer;
+}
+
+.nav-button:hover{
+    color: #dcdbdb;
+}
+.current{
+    text-decoration: underline;
+}
+
+#header-spacer{
+    height: 90px;
+}
+
+#logout{
+    padding-right: 15px;
 }
 
 .flash-message{
