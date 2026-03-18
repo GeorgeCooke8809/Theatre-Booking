@@ -75,10 +75,17 @@ header{
 
 .flash-message{
     position: fixed;
+    display: flex;
+    align-items: center;
     top: 0px;
     left: 0px;
 
-    width: 150px;
+    border-left-style: solid;
+    border-left-color: #872c2c;
+    border-left-width: 7.5px;
+
+    width: 500px;
+    min-height: 50px;
 
     padding: 5px;
 

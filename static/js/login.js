@@ -1,9 +1,7 @@
 async function checkPassword(email, password){
     event.preventDefault()
     var email = document.querySelector("#username").value;
-    console.log(email);
     var password = document.querySelector("#password").value;
-    console.log(password);
 
     response = await fetch("/api/check-login-details", {
             method: "POST",
@@ -24,6 +22,6 @@ async function checkPassword(email, password){
                 window.location.replace(`./visitor-dashboard?uid=${correctness.userID}`)
             }}
     else{
-        flashMessage("That username or password is incorrect.")
+        flashMessage("That email or password is incorrect.")
     }
 }
