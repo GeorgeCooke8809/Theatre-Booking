@@ -73,12 +73,15 @@ header{
     font-style: italic;
 }
 
-.flash-message{
+#flash-container{
     position: fixed;
-    display: flex;
-    align-items: center;
     top: 0px;
     left: 0px;
+}
+
+.flash-message{
+    display: flex;
+    align-items: center;
 
     border-left-style: solid;
     border-left-color: #872c2c;
@@ -88,6 +91,7 @@ header{
     min-height: 50px;
 
     padding: 5px;
+    margin-bottom: 5px;
 
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;

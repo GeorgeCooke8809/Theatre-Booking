@@ -67,13 +67,61 @@ def add_event():
     logging.debug("API Add Event Triggered")
     request_dict = request.get_json()
 
-    request_dict["childPrice"] = float(request_dict["childPrice"])
-    request_dict["adultPrice"] = float(request_dict["adultPrice"])
-    request_dict["elderlyPrice"] = float(request_dict["elderlyPrice"])
-
     logging.debug(f"{request_dict = }")
 
-    #TODO: validation
+    try:
+        request_dict["childPrice"] = float(request_dict["childPrice"])
+        request_dict["adultPrice"] = float(request_dict["adultPrice"])
+        request_dict["elderlyPrice"] = float(request_dict["elderlyPrice"])
+    except ValueError: # Triggered when cannot convert one of the prices
+        return jsonify({
+            "code": 401,
+            "message": "One of your prices is not a number."
+        })
+
+    if request_dict["childPrice"] >= 100_000 or request_dict["adultPrice"] >= 100_000 or request_dict["elderlyPrice"] >= 100_000:
+        return jsonify({
+            "code": 401,
+            "message": "One or more of your prices are too high."
+        })
+        
+    child_split = str(request_dict["childPrice"]).split(".")
+    adult_split = str(request_dict["adultPrice"]).split(".")
+    elderly_split = str(request_dict["adultPrice"]).split(".")
+
+    if len(child_split) == 2:
+        if len(child_split[1]) > 2:
+            return jsonify({
+                "code": 401,
+                "message": "Your child price has too many decimal places."
+            })
+        
+    if len(adult_split) == 2:
+        if len(adult_split[1]) > 2:
+            return jsonify({
+                "code": 401,
+                "message": "Your adult price has too many decimal places."
+            })
+        
+    if len(elderly_split) == 2:
+        if len(elderly_split[1]) > 2:
+            return jsonify({
+                "code": 401,
+                "message": "Your elderly price has too many decimal places."
+            })
+
+    for seat in request_dict["unavailableSeats"]:
+        if backend_connection._check_valid_seat_ID(seat) == False:
+            return jsonify({
+                "code": 401,
+                "message": "There was an invalid seat in your request."
+            })
+        
+    if len(request_dict["title"]) > 100:
+        return jsonify({
+            "code": 401,
+            "message": "Your title is too long. Please limit it to 100 characters."
+        })
 
     performance_id = backend_connection.add_performance(request_dict["title"], request_dict["description"], request_dict["childPrice"], request_dict["adultPrice"], request_dict["elderlyPrice"])
     
