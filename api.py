@@ -61,3 +61,25 @@ def create_account():
     return jsonify({
         "code": 200
     })
+
+@api.route("/add-event", methods = ["POST"])
+def add_event():
+    logging.debug("API Add Event Triggered")
+    request_dict = request.get_json()
+
+    request_dict["childPrice"] = float(request_dict["childPrice"])
+    request_dict["adultPrice"] = float(request_dict["adultPrice"])
+    request_dict["elderlyPrice"] = float(request_dict["elderlyPrice"])
+
+    logging.debug(f"{request_dict = }")
+
+    #TODO: validation
+
+    performance_id = backend_connection.add_performance(request_dict["title"], request_dict["description"], request_dict["childPrice"], request_dict["adultPrice"], request_dict["elderlyPrice"])
+    
+    for seat in request_dict["unavailableSeats"]:
+        backend_connection.mark_seat_unavailable(seat, performance_id)
+
+    return jsonify({
+        "code": 200
+    })
