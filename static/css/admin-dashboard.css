@@ -1,5 +1,6 @@
 #add-event{
     all: unset;
+    box-sizing: border-box;
 
     display: flex;
     justify-content: center;
@@ -9,16 +10,105 @@
     padding: 10px;
 
     width: 100%;
-    height: 50px;
+    height: 70px;
 
     background-color: #dcdbdb;
-    border-radius: 1rem;
+    border-radius: 2rem;
 
-    font-size: 30px;
+    font-size: 50px;
 
     cursor: pointer;
 }
 
 #add-event:hover{
     background-color: #bfbfbf;
+}
+
+.performance-details{
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.performance-details summary{
+    box-sizing: border-box;
+    font-size: 50px;
+    margin-top: 15px;
+    background-color: #dcdbdb;
+    border-radius: 1rem;
+    padding: 10px;
+    padding-left: 20px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.performance-details summary:hover{
+    background-color: #bfbfbf;
+}
+
+.delete-performance{
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #831313;
+    color: white;
+    border-radius: 2rem;
+    text-align: center;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.delete-performance:hover{
+    background-color: #941919;
+}
+
+hr{
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 0px;
+}
+
+.new-showing-subtitle{
+    padding: 0px;
+    margin: 10px 0px;
+    margin-right: 10px;
+}
+
+.attendees-details summary{
+    box-sizing: border-box;
+    font-size: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #dcdbdb;
+    border-radius: 1rem;
+    padding: 10px;
+    padding-left: 20px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.attendees-details summary:hover{
+    background-color: #bfbfbf;
+}
+
+.add-showing-container{
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+}
+
+.showing-date{
+    margin: 10px 0px;
+}
+
+.showing-detail-text h3{
+    margin: 5px;
+    margin-left: 0px;
+}
+
+.showing-detail-text p{
+    margin: 0px;
 }

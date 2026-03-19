@@ -98,3 +98,8 @@ header{
     background-color: #ce5555;
     color: white;
 }
+
+.inline{
+    display: flex;
+    align-items: center;
+}

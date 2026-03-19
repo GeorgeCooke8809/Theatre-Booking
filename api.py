@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, flash
 from backend import Backend
 import logging
+from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG, filename="api.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")
@@ -64,7 +65,6 @@ def create_account():
 
 @api.route("/add-event", methods = ["POST"])
 def add_event():
-
     logging.debug("API Add Event Triggered")
     request_dict = request.get_json()
 
@@ -139,3 +139,52 @@ def add_event():
         "code": 200
     })
 
+@api.route("/delete-performance", methods = ["POST"])
+def delete_performance():
+    logging.debug("API Delete Performance Triggered")
+    request_dict = request.get_json()
+    
+    try:
+        if backend_connection._check_performance_exists(request_dict["performanceID"]) == False:
+            return jsonify({
+                    "code": 401,
+                    "message": "That performance does not exist."
+                })
+        
+        backend_connection.delete_performance(request_dict["performanceID"])
+
+        return jsonify({
+            "code": 200
+        })
+    except:
+        return jsonify({
+            "code": 500,
+            "Message": "Something went wrong."
+        })
+    
+@api.route("/add-showing", methods=["POST"])
+def add_showing():
+    logging.debug("Add Showing Triggered")
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        performanceID = request_dict["performanceID"]
+
+        logging.debug("Checking performance exists.")
+        if backend_connection._check_performance_exists(performanceID) == False:
+            logging.debug("Performance does not exist.")
+            return jsonify({
+                "code": 401,
+                "message": "That performance does not exist."
+            })
+        logging.debug("Performance does exists, continuing.")
+        date = request_dict["date"]
+
+        backend_connection.add_showing(performanceID, datetime.strptime(date, "%Y-%m-%d"))
+    except Exception as e:
+        logging.critical(f"Something went wrong: {e}")
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })

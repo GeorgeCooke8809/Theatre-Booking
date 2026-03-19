@@ -50,6 +50,9 @@ def admin_dashboard():
         showing = data.admin_get_showings(performance[0])
         showings.append(showing)
 
+    logging.debug(f"{performances = }")
+    logging.debug(f"{showings = }")
+
     return flask.render_template("admin-dashboard.html",
                                  performances=performances,
                                  showings=showings,

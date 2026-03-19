@@ -760,13 +760,14 @@ class Backend:
         """
         Adds a new showing to for the performance with the given performanceID on the specified date. Returns the newly added showingID
         """
+        logging.debug("Made it to add_showing backend")
         if self._check_performance_exists(performanceID) == False:
             logging.critical("PerformanceID does not exist.")
             raise Exception("PerformanceID does not exist.")
 
-        if type(date) != datetime.date:
-            logging.critical(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
-            raise Exception(f"Date format is invalid. Expected datetime.date, got {type(date)}.")
+        """DOES NOT WORK - if type(date) != datetime.date or type(date) != datetime.datetime:
+            logging.critical(f"Date format is invalid. Expected datetime.date or datetime.datetime, got {type(date)}.")
+            raise Exception(f"Date format is invalid. Expected datetime.date or datetime.datetime, got {type(date)}.")"""
 
         with self._connection() as connection:
             next_id = self._get_next_ID(table="Showings")
@@ -959,6 +960,6 @@ class Backend:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
+
+logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")

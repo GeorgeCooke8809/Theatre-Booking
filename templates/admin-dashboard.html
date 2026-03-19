@@ -10,6 +10,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
 
         <script defer src="static/js/common.js"></script>
+        <script defer src="static/js/admin-dashboard.js"></script>
     </head>
 
     <header> 
@@ -25,24 +26,32 @@
 
     <body>
         <div id="header-spacer"></div>
-        <a id="add-event" href="./admin-add-event">Add Event</a>
+        <a id="add-event" href="./admin-add-event">Add Performance</a>
 
         {% for index in range(length): %}
-            <details> <!-- TODO: Add CSS formatting to details pane for performances -->
+            <details class="performance-details"> <!-- TODO: Make show performances with out of date showings -->
                 <summary>{{ performances[index][1] }}</summary>
-                <h3>Add new showing:</h3>
-                <input type="date"> <!-- TODO: Add JS functionality to add showing date select -->
+                <button class="delete-performance" onclick='deletePerformance("{{ performances[index][0] }}")'>Delete Performance</button>
+                
+                <div class="add-showing-container">
+                    <h3 class="new-showing-subtitle">Add new showing:</h3>
+                    <input onchange='addShowing(this.value, "{{ performances[index][0] }}")' type="date">
+                </div>
 
-                <button>Delete Performance</button> <!-- TODO: Add JS functionality to delete performance, TODO: Add CSS formatting to delete button -->
 
                 <hr>
 
-                {% for showing in showings[index]: %}
-                    <h2>{{ showing[1] }}</h2>
-                    <h3>Tickets Sold: {{ 200-showings[2] }}/200</h3>
-                    <h3>Revenue: PLACEHOLDER</h3>
+                {% for showing in showings[index]: %} <!-- TODO: Add delete showing -->
+                    <h2 class="showing-date">{{ showing[1] }}</h2>
+                    <div class="inline showing-detail-text">
+                        <h3>Tickets Sold: </h3> <p>{{ 200-showing[2] }}/200</p>
+                    </div>
+                    
+                    <div class="inline showing-detail-text">
+                        <h3>Revenue: </h3> <p>PLACEHOLDER</p>
+                    </div>
 
-                    <details> <!-- TODO: Add CSS formatting to details pane for attendees -->
+                    <details class="attendees-details"> <!-- TODO: Add CSS formatting to details pane for attendees -->
                         <summary>Attendees</summary>
 
                         {% for attendee in showing[3] %}
