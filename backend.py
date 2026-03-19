@@ -166,7 +166,7 @@ class Backend:
                 cursor = connection.cursor()
 
                 logging.debug("Getting performances...")
-                cursor.execute("SELECT performanceID, title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingDate >= ?)", (date_from))
+                cursor.execute("SELECT performanceID, title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingDate >= ?) OR performanceID IN (SELECT performanceID FROM dbo.Performances WHERE PerformanceID NOT IN (SELECT performanceID FROM dbo.Showings))", (date_from))
                 performance_sql = cursor.fetchall()
 
                 performances = [(performance[0], performance[1]) for performance in performance_sql]
@@ -915,6 +915,22 @@ class Backend:
 
                 logging.debug(f"Deleting user {userID}...")
                 cursor.execute("DELETE FROM dbo.Users WHERE userID =?", (userID))
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+
+    def delete_performance(self,performanceID) -> None:
+        """
+        Deletes the provided performance and any showings associated with it.
+        """
+
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug(f"Deleting performance {performanceID}...")
+                cursor.execute("DELETE FROM dbo.Showings WHERE performanceID =?", (performanceID))
+                cursor.execute("DELETE FROM dbo.Performances WHERE performanceID = ?", (performanceID))
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")

@@ -64,11 +64,24 @@ def create_account():
 
 @api.route("/add-event", methods = ["POST"])
 def add_event():
+
     logging.debug("API Add Event Triggered")
     request_dict = request.get_json()
 
     logging.debug(f"{request_dict = }")
 
+    if len(request_dict["title"]) == 0:
+        return jsonify({
+            "code": 401,
+            "message": "You performance does not have a title."
+        })
+    
+    if len(request_dict["title"]) > 100:
+        return jsonify({
+            "code": 401,
+            "message": "Your title is too long. Please limit it to 100 characters."
+        })
+    
     try:
         request_dict["childPrice"] = float(request_dict["childPrice"])
         request_dict["adultPrice"] = float(request_dict["adultPrice"])
@@ -116,12 +129,6 @@ def add_event():
                 "code": 401,
                 "message": "There was an invalid seat in your request."
             })
-        
-    if len(request_dict["title"]) > 100:
-        return jsonify({
-            "code": 401,
-            "message": "Your title is too long. Please limit it to 100 characters."
-        })
 
     performance_id = backend_connection.add_performance(request_dict["title"], request_dict["description"], request_dict["childPrice"], request_dict["adultPrice"], request_dict["elderlyPrice"])
     
@@ -131,3 +138,4 @@ def add_event():
     return jsonify({
         "code": 200
     })
+

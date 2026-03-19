@@ -26,6 +26,35 @@
     <body>
         <div id="header-spacer"></div>
         <a id="add-event" href="./admin-add-event">Add Event</a>
+
+        {% for index in range(length): %}
+            <details> <!-- TODO: Add CSS formatting to details pane for performances -->
+                <summary>{{ performances[index][1] }}</summary>
+                <h3>Add new showing:</h3>
+                <input type="date"> <!-- TODO: Add JS functionality to add showing date select -->
+
+                <button>Delete Performance</button> <!-- TODO: Add JS functionality to delete performance, TODO: Add CSS formatting to delete button -->
+
+                <hr>
+
+                {% for showing in showings[index]: %}
+                    <h2>{{ showing[1] }}</h2>
+                    <h3>Tickets Sold: {{ 200-showings[2] }}/200</h3>
+                    <h3>Revenue: PLACEHOLDER</h3>
+
+                    <details> <!-- TODO: Add CSS formatting to details pane for attendees -->
+                        <summary>Attendees</summary>
+
+                        {% for attendee in showing[3] %}
+                            <p>{{ attendee[1] }} {{ attendee[2] }} - {{ attendee[3] }}</p>
+                        {% endfor %}
+                    </details>
+
+                    <hr>
+                {% endfor %}
+
+            </details>
+        {% endfor %}
         
 
         <div id="flash-container"></div>

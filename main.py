@@ -43,7 +43,18 @@ def visitor_dashboard():
 
 @app.route("/admin-dashboard", methods = ["GET"])
 def admin_dashboard():
-    return flask.render_template("admin-dashboard.html")
+    performances = data.get_all_performances()
+    showings = []
+
+    for performance in performances:
+        showing = data.admin_get_showings(performance[0])
+        showings.append(showing)
+
+    return flask.render_template("admin-dashboard.html",
+                                 performances=performances,
+                                 showings=showings,
+                                 length = len(performances)
+                                 )
 
 @app.route("/admin-add-event", methods = ["GET"])
 def admin_add_event():
