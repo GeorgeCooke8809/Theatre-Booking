@@ -3,6 +3,7 @@ import logging
 import flask
 from flask import Flask, request, redirect, url_for, send_from_directory, flash
 from api import api
+import datetime
 
 logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")
@@ -37,13 +38,30 @@ def visitor_dashboard():
 
     if userID == "None":
         return redirect("/")
-    return f"<h1>Visitor Dashboard - {userID = }</h1>"
+    return flask.render_template("visitor-events.html",
+                                 userID=userID,
+                                 userName = data.get_user_name(userID),
+                                 performances = data.get_all_performances()
+                                )
+
+@app.route("/visitor-bookings", methods=["GET"])
+def visitor_bookings():
+    userID = flask.request.args.get("uid", default="None", type=int)
+
+    return f"<h1>Visitor bookings - {userID = }</h1>"
+
+@app.route("/performance-showings", methods = ["GET"])
+def performance_showings():
+    userID = flask.request.args.get("uid", default="None", type=int)
+    performanceID = flask.request.args.get("pid", default="None", type=int)
+
+    return f"<h1>Performance Showings - {userID = }, {performanceID = }</h1>"
 
 # --------------------------- Admin Sections ---------------------------
 
 @app.route("/admin-dashboard", methods = ["GET"])
 def admin_dashboard():
-    performances = data.get_all_performances()
+    performances = data.get_all_performances(date_from=datetime.date(year=1, month=1, day=1))
     showings = []
 
     for performance in performances:
@@ -57,7 +75,7 @@ def admin_dashboard():
                                  performances=performances,
                                  showings=showings,
                                  length = len(performances)
-                                 )
+                                )
 
 @app.route("/admin-add-event", methods = ["GET"])
 def admin_add_event():

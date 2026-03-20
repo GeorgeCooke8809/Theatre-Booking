@@ -80,6 +80,25 @@ class Backend:
 
         return new_ID
 
+    def get_user_name(self, userID) -> str:
+        """
+        Used to get the name of the user to be displayed in the top right corner of the user pages for logout.
+        """
+        if self._check_user_exists(userID) == False:
+            return ""
+        
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT fName, lName FROM dbo.Users WHERE userID = ?", (userID))
+                sql_response = cursor.fetchone()
+
+                return f"{sql_response[0]} {sql_response[1]}"
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
+
     def check_password(self, email: str, password_attempt: str) -> tuple[bool, int, str]:
         """
         Checks if the entered password is correct for the email. Then returns a tuple with if the password is correct and (if correct) the relevant userID and user type.
@@ -155,7 +174,7 @@ class Backend:
     def get_all_performances(self, date_from: datetime.date = datetime.date.today()) -> list[tuple[int, str]]:
         """
         Gets and returns a list of all performances from and including the date provided sorted by ascending date.
-        Returns in the format [(performanceID, performance title)]
+        Returns in the format [(performanceID, performance title, description)]
         """
         if type(date_from) != datetime.date:
             logging.critical("Date_from given is not datetime.date")
@@ -166,10 +185,10 @@ class Backend:
                 cursor = connection.cursor()
 
                 logging.debug("Getting performances...")
-                cursor.execute("SELECT performanceID, title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingDate >= ?) OR performanceID IN (SELECT performanceID FROM dbo.Performances WHERE PerformanceID NOT IN (SELECT performanceID FROM dbo.Showings))", (date_from))
+                cursor.execute("SELECT performanceID, title, performanceDescription FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingDate >= ?) OR performanceID IN (SELECT performanceID FROM dbo.Performances WHERE PerformanceID NOT IN (SELECT performanceID FROM dbo.Showings))", (date_from))
                 performance_sql = cursor.fetchall()
 
-                performances = [(performance[0], performance[1]) for performance in performance_sql]
+                performances = [(performance[0], performance[1], performance[2]) for performance in performance_sql]
 
                 logging.debug(f"{performances = }")
             else:

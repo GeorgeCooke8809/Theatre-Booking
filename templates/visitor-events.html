@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Events</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-events.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <header> 
+        <nav id="navigation-bar">
+            <ul>
+                <li><a href="#" class="nav-button current">Events</a></li>
+                <li><a href="./visitor-bookings?uid={{ userID }}" class="nav-button">My Bookings</a></li>
+            </ul>
+        </nav>
+
+        <a id="logout" class="nav-button" href=".">{{ userName }}</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+
+        <h1 id="performances-heading">Performances:<hr></h1>
+        <hr>
+
+        {% for performance in performances: %}
+            <div class="performance">
+                <div class="inline performance-top-row">
+                    <h2>{{ performance[1] }}</h2>
+                    <a href="/performance-showings?uid={{ userID}}&&pid={{ performance[0] }}">Book Tickets</a>
+                </div>
+
+                <p class="performance-description">{{ performance[2] }}</p>
+
+                <hr>
+            </div>
+        {% endfor %}
+
+        <div id="flash-container"></div>
+    </body>
+</html>

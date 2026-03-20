@@ -112,3 +112,7 @@ hr{
 .showing-detail-text p{
     margin: 0px;
 }
+
+input{
+    cursor: pointer;
+}
