@@ -159,7 +159,7 @@ def delete_performance():
     except:
         return jsonify({
             "code": 500,
-            "Message": "Something went wrong."
+            "message": "Something went wrong."
         })
     
 @api.route("/add-showing", methods=["POST"])
