@@ -1,0 +1,104 @@
+#columns{
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#left-column{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    align-content: space-between;
+
+    width: 60%;
+    height: 100%;
+
+    padding-left: 10px;
+}
+
+#screen{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    color: #dcdbdb;
+    background-color: #313131;
+    border-radius: 0.5rem;
+    font-size: 30px;
+    padding: 20px 0px;
+    margin: 10px 0px;
+    margin-bottom: 15px;
+}
+
+#seats{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.isle{
+    width: 4.75%;
+    aspect-ratio: 1/1;
+    min-width: 30px;
+    min-height: 30px;;
+}
+
+.seat-row{
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+}
+
+.seat-button{
+    all: unset;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 4.75%;
+    aspect-ratio: 1/1;
+    min-width: 30px;
+    min-height: 30px;
+
+    border-radius: 1rem;
+
+    font-size: 18px;
+
+    margin: 5px;
+
+    cursor: pointer;
+}
+
+.available-seat{
+    background-color: #dcdbdb;
+
+    color: #313131;
+}
+
+.available-seat:hover{
+    background-color: #bfbfbf;
+}
+
+.unavailable-seat{
+    color: #dcdbdb;
+
+    background-color: #313131;
+}
+
+#right-column{
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    width: 40%;
+    height: 100%;
+
+    padding: 15px;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Events</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-select-showing.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <header> 
+        <nav id="navigation-bar">
+            <ul>
+                <li><a href="./visitor-dashboard?uid={{ userID }}" class="nav-button current">Events</a></li>
+                <li><a href="./visitor-bookings?uid={{ userID }}" class="nav-button">My Bookings</a></li>
+            </ul>
+        </nav>
+
+        <a id="logout" class="nav-button" href=".">{{ userName }}</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+
+        <h1 id="performances-heading">{{ performanceName }}</h1>
+        <h2 id="available-dates">Available Dates:</h2>
+
+        <div id="showings-container">
+            {% for showing in showings: %}
+                <a class="showing-link" href="./book-showing?uid={{ userID }}&sid={{ showing[0] }}">{{ showing[1] }}</a>
+            {% endfor %}
+        </div>
+
+        <div id="flash-container"></div>
+    </body>
+</html>

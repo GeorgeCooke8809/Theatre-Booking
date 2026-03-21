@@ -38,7 +38,7 @@ async function addShowing(date, performanceID){
             });
 
     response_json = await response.json()
-    console.log(response)
+    console.log(response_json)
 
     if (response_json.code == 200){
         console.log("Information correct, redirecting.")

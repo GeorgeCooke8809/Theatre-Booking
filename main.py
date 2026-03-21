@@ -55,7 +55,27 @@ def performance_showings():
     userID = flask.request.args.get("uid", default="None", type=int)
     performanceID = flask.request.args.get("pid", default="None", type=int)
 
-    return f"<h1>Performance Showings - {userID = }, {performanceID = }</h1>"
+    return flask.render_template("visitor-select-showing.html",
+                                 userID=userID,
+                                 performanceID = performanceID,
+                                 showings = data.get_all_performance_showings(performanceID),
+                                 userName = data.get_user_name(userID),
+                                 performanceName = data.get_performance_name(performanceID)
+                                )
+
+@app.route("/book-showing", methods=["GET"])
+def book_showing():
+    userID = flask.request.args.get("uid", default="None", type=int)
+    showingID = flask.request.args.get("sid", default="None", type=int)
+
+    return flask.render_template("visitor-book-showing.html",
+                                 userID = userID,
+                                 showingID = showingID,
+                                 performanceName = "PLACEHOLDER",
+                                 showingDate = "PLACEHOLDER",
+                                 userName = data.get_user_name(userID),
+                                 unavailableSeats = data.get_unavailable_seats(showingID)
+                                )
 
 # --------------------------- Admin Sections ---------------------------
 

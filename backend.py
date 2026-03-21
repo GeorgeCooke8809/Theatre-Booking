@@ -170,6 +170,27 @@ class Backend:
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
+            
+    def get_performance_name(self, performanceID) -> str:
+        """
+        Gets and returns the string name of the performance with the given ID.
+        """
+
+        if self._check_performance_exists(performanceID) == False:
+            return ""
+        
+        with self._connection() as connection:
+            if connection is not None:
+                cursor = connection.cursor()
+
+                logging.debug("Getting performances...")
+                cursor.execute("SELECT title FROM dbo.Performances WHERE performanceID = ?", (performanceID))
+                performance_sql = cursor.fetchone()
+
+                return performance_sql[0]
+            else:
+                logging.critical("Could not connect to database")
+                raise Exception("Could not connect to database")
 
     def get_all_performances(self, date_from: datetime.date = datetime.date.today()) -> list[tuple[int, str]]:
         """
@@ -213,7 +234,7 @@ class Backend:
                 cursor = connection.cursor()
 
                 logging.debug("Getting showings...")
-                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ?", (performanceID))
+                cursor.execute("SELECT showingID, showingDate FROM dbo.Showings WHERE performanceID = ? AND showingDate >= CAST(CURRENT_TIMESTAMP AS DATE)", (performanceID))
                 results = cursor.fetchall()
 
                 showings = []
@@ -316,7 +337,7 @@ class Backend:
 
                 cursor.execute("SELECT seatID FROM dbo.PerformanceUnavailableSeats WHERE performanceID = ?", (performanceID))
                 unavailable_seats = cursor.fetchall()
-                unavailable_seats = [seat[0] for seat in unavailable_seats]
+                unavailable_seats = [(seat[0], "UNAVAILABLE") for seat in unavailable_seats]
 
                 cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                 bookingIDs = cursor.fetchall()
@@ -330,16 +351,16 @@ class Backend:
                 if type(bookingIDs) == int:
                     cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE bookingID = ?", (bookingIDs))
                     booked_seats = cursor.fetchall()
-                    booked_seats = [seat[0] for seat in booked_seats]
+                    booked_seats = [(seat[0], "BOOKED") for seat in booked_seats]
                 elif bookingIDs != "()":
                     cursor.execute(f"SELECT seatID FROM dbo.BookingSeats WHERE bookingID IN {bookingIDs}")
                     booked_seats = cursor.fetchall()
-                    booked_seats = [seat[0] for seat in booked_seats]
+                    booked_seats = [(seat[0], "BOOKED") for seat in booked_seats]
                 else:
                     booked_seats = []
 
                 unavailable_seats.extend(booked_seats)
-                unavailable_seats.sort(key = lambda x: f"{x[-1]}{int(x[0:-1]):02d}")
+                #unavailable_seats.sort(key = lambda x: f"{x[-1]}{int(x[0:-1]):02d}")
 
                 return unavailable_seats
             else:
@@ -556,16 +577,6 @@ class Backend:
     def generate_pdf(self, bookingID: int) -> None:
         """
         Generates and saves a PDF ticket for the specified booking
-        """
-        #TODO: Implement - generate_pdf
-        """
-        Needed information:
-            - Performance title,
-            - Showing date,
-            - User name,
-            - Seat compositions,
-                - Seat IDs,
-            - Total paid,
         """
         if self._check_booking_exists(bookingID) == False:
             logging.critical("Booking does not exist, cannot generate ticket.")
@@ -949,8 +960,11 @@ class Backend:
                 cursor = connection.cursor()
 
                 logging.debug(f"Deleting performance {performanceID}...")
-                cursor.execute("DELETE FROM dbo.Showings WHERE performanceID =?", (performanceID))
                 cursor.execute("DELETE FROM dbo.Performances WHERE performanceID = ?", (performanceID))
+                cursor.execute("DELETE FROM dbo.UnavailableSeats WHERE performanceID = ?", (performanceID))
+                cursor.execute("DELETE FROM dbo.BookingSeats WHERE bookingID = (SELECT bookingID FROM dbo.Bookings WHERE showingID IN (SELECT showingID FROM dbo.Showings WHERE performanceID = ?))", (performanceID))
+                cursor.execute("DELETE FROM dbo.Bookings WHERE showingID IN (SELECT showingID FROM dbo.Showings WHERE performance ID = ?", (performanceID))
+                cursor.execute("DELETE FROM dbo.Showings WHERE performanceID =?", (performanceID))
             else:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")

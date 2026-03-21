@@ -844,7 +844,6 @@ class TestGetUserBookings(Test):
         assert self.backend.get_user_bookings(1, date(2026, 3, 15)) == []
 
 class TestGetAllPerformances(Test):
-    # TODO: test
     def test_get_all_performances_valid(self):
         self.backend.add_performance("Lorem Ipsum", "This is a super duper description", 5.0, 10.0, 5.0)
         self.backend.add_showing(1, date(2026, 3, 10))
