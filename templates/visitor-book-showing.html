@@ -6,10 +6,10 @@
         <title>Collyer's Theatre Booking - Admin Add Event</title>
 
         <link rel="stylesheet" type="text/css" href="static/css/common.css">
-        <link rel="stylesheet" type="text/css" href="static/css/admin-add-event.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-book-showing.css">
         <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
 
-        <script defer src="static/js/admin-add-event.js"></script>
+        <script src="static/js/visitor-book-showing.js"></script>
         <script defer src="static/js/common.js"></script>
     </head>
 
@@ -25,7 +25,6 @@
     </header>
 
     <body>
-        <script>console.log('{{ unavailableSeats}}')</script>
         <div id="header-spacer"></div>
         
         <div id="columns">
@@ -39,21 +38,8 @@
                     {% for i in range(1, 11): %}
                         <div class="seat-row">
                             {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T"]: %}
-                                {% set found = False %}
-                                {% for seat in unavailableSeats: %}
-                                    {% if i ~ j == seat[0] and seat[1] == "BOOKED": %}
-                                        <button class="seat-button booked-seat" id="{{ i }}{{ j }}">{{ i }}{{ j }}</button>
-                                        {% set found = True %}
-                                    {% elif  i ~ j == seat[0] and seat[1] == "UNAVAILABLE": %}
-                                        <button class="seat-button unavailable-seat" id="{{ i }}{{ j }}">{{ i }}{{ j }}</button>
-                                        {% set found = True %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if found == False: %}
-                                    <button class="seat-button available-seat" id="{{ i }}{{ j }}" onclick="addSeat('{{ i }}{{ j }}')">{{ i }}{{ j }}</button>
-                                {% endif %}
-
+                                <button class="seat-button available-seat" id="{{ i }}{{ j }}" onclick="addSeat('{{ i }}{{ j }}')">{{ i }}{{ j }}</button>
+                                
                                 {% if j == "J": %}
                                     <div class="isle"></div>
                                 {% endif %}
@@ -61,6 +47,8 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                <script>markUnavailableSeats({{ unavailableSeats | tojson}})</script>
             </div>
 
             <form id="right-column" onsubmit=bookShowing()>

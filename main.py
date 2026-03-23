@@ -68,6 +68,8 @@ def book_showing():
     userID = flask.request.args.get("uid", default="None", type=int)
     showingID = flask.request.args.get("sid", default="None", type=int)
 
+    logging.debug(f"{data.get_unavailable_seats(showingID) = }")
+
     return flask.render_template("visitor-book-showing.html",
                                  userID = userID,
                                  showingID = showingID,

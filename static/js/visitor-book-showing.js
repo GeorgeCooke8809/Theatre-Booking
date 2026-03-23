@@ -8,7 +8,7 @@ async function addSeat(seatID){
     oldSeatButton = document.getElementById(seatID);
 
     var newSeatButton = document.createElement("button");
-    newSeatButton.className = "seat-button unavailable-seat";
+    newSeatButton.className = "seat-button selected-seat";
     newSeatButton.id = seatID;
     newSeatButton.setAttribute("onclick",`removeSeat('${seatID}')`);
     newSeatButton.textContent = seatID;
@@ -71,5 +71,22 @@ async function addEvent(){
         console.log("Information incorrect, flashing error.")
         
         flashMessage(response_json.message)
+    }
+}
+
+function markUnavailableSeats(unavailableSeatsArray){
+    console.log(unavailableSeatsArray);
+
+    for (let i = 0; i < unavailableSeatsArray.length; i++) {
+        let seat = unavailableSeatsArray[i];
+        let seat_button = document.getElementById(seat[0]);
+
+        seat_button.setAttribute("onclick","");
+
+        if (seat[1] == "BOOKED") {
+            seat_button.classList = "seat-button booked-seat";
+        } else if (seat[1] == "UNAVAILABLE") {
+            seat_button.classList = "seat-button unavailable-seat";
+        }
     }
 }

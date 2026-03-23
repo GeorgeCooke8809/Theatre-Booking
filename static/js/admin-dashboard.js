@@ -14,7 +14,7 @@ async function deletePerformance(performanceID){
 
     if (response_json.code == 200){
         console.log("Information correct, redirecting.")
-        window.location.replace("./admin-dashboard")
+        window.location.replace("./admin-dashboard") /* TODO: Does not refresh page. */
     }
     else{
         console.log("Information incorrect, flashing error.")

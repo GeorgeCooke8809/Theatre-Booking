@@ -29,7 +29,7 @@
         <a id="add-event" href="./admin-add-event">Add Performance</a>
 
         {% for index in range(length): %}
-            <details class="performance-details"> <!-- TODO: Make show performances with out of date showings -->
+            <details class="performance-details"> <!-- TODO: Make show performances with out of date showings - Might require a new function in backend.py -->
                 <summary>{{ performances[index][1] }}</summary>
                 <button class="delete-performance" onclick='deletePerformance("{{ performances[index][0] }}")'>Delete Performance</button>
                 
@@ -41,17 +41,17 @@
 
                 <hr>
 
-                {% for showing in showings[index]: %} <!-- TODO: Add delete showing -->
+                {% for showing in showings[index]: %} <!-- TODO: Add delete showing button -->
                     <h2 class="showing-date">{{ showing[1] }}</h2>
                     <div class="inline showing-detail-text">
                         <h3>Tickets Sold: </h3> <p>{{ 200-showing[2] }}/200</p>
                     </div>
                     
                     <div class="inline showing-detail-text">
-                        <h3>Revenue: </h3> <p>PLACEHOLDER</p>
+                        <h3>Revenue: </h3> <p>PLACEHOLDER</p> <!-- TODO: Make calculate total revenue made from a showing - Will require a new function in backend. -->
                     </div>
 
-                    <details class="attendees-details"> <!-- TODO: Add CSS formatting to details pane for attendees -->
+                    <details class="attendees-details"> <!-- TODO: Format attendees list -->
                         <summary>Attendees</summary>
 
                         {% for attendee in showing[3] %}

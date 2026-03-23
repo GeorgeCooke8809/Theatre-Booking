@@ -179,6 +179,8 @@ class Backend:
         if self._check_performance_exists(performanceID) == False:
             return ""
         
+        performanceID = int(performanceID)
+        
         with self._connection() as connection:
             if connection is not None:
                 cursor = connection.cursor()
@@ -337,7 +339,7 @@ class Backend:
 
                 cursor.execute("SELECT seatID FROM dbo.PerformanceUnavailableSeats WHERE performanceID = ?", (performanceID))
                 unavailable_seats = cursor.fetchall()
-                unavailable_seats = [(seat[0], "UNAVAILABLE") for seat in unavailable_seats]
+                unavailable_seats = [[seat[0], "UNAVAILABLE"] for seat in unavailable_seats]
 
                 cursor.execute("SELECT bookingID FROM dbo.Bookings WHERE showingID = ?", (showingID))
                 bookingIDs = cursor.fetchall()
@@ -351,11 +353,11 @@ class Backend:
                 if type(bookingIDs) == int:
                     cursor.execute("SELECT seatID FROM dbo.BookingSeats WHERE bookingID = ?", (bookingIDs))
                     booked_seats = cursor.fetchall()
-                    booked_seats = [(seat[0], "BOOKED") for seat in booked_seats]
+                    booked_seats = [[seat[0], "BOOKED"] for seat in booked_seats]
                 elif bookingIDs != "()":
                     cursor.execute(f"SELECT seatID FROM dbo.BookingSeats WHERE bookingID IN {bookingIDs}")
                     booked_seats = cursor.fetchall()
-                    booked_seats = [(seat[0], "BOOKED") for seat in booked_seats]
+                    booked_seats = [[seat[0], "BOOKED"] for seat in booked_seats]
                 else:
                     booked_seats = []
 
@@ -490,7 +492,7 @@ class Backend:
             logging.critical("User does not exist, cannot check user admin status.")
             raise Exception("User does not exist, cannot check user admin status.")
         
-        if self._check_performance_exists(userID) == False:
+        if self._check_performance_exists(performanceID) == False:
             logging.critical("Performance doesn't exist.")
             raise Exception("Performance doesn't exist.")
         
@@ -950,7 +952,7 @@ class Backend:
                 logging.critical("Could not connect to database")
                 raise Exception("Could not connect to database")
 
-    def delete_performance(self,performanceID) -> None:
+    def delete_performance(self,performanceID) -> None: # TODO: delete_performance has broken - This feature broke since making it delete from Unavailable Seats, Booking Seats
         """
         Deletes the provided performance and any showings associated with it.
         """
