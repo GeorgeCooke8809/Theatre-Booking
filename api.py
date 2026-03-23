@@ -188,3 +188,83 @@ def add_showing():
             "code": 500,
             "message": "Something went wrong."
         })
+
+@api.route("/book-showing", methods = ["POST"])
+def book_showing():
+    logging.debug("Book showing triggered")
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        child_seats = int(request_dict["childSeats"])
+        adult_seats = int(request_dict["adultSeats"])
+        elderly_seats = int(request_dict["elderlySeats"])
+        logging.debug(f"{child_seats = } {adult_seats = } {elderly_seats = }")
+    except:
+        return jsonify({
+            "code": 401,
+            "message": "One or more of your seat type quantities are not numbers."
+        })
+
+    total_seats = child_seats + adult_seats + elderly_seats
+
+    logging.debug(f"{total_seats = }")
+    logging.debug(f"{len(request_dict["bookedSeats"]) = }")
+
+    if total_seats != len(request_dict["bookedSeats"]):
+        return jsonify({
+            "code": 401,
+            "message": "The number of seats selected and seat types given do not match."
+        })
+    
+    for seatID in request_dict["bookedSeats"]:
+            if backend_connection._check_seat_available(seatID, request_dict["showingID"]) == False:
+                return jsonify({
+                    "code": 401,
+                    "message": "One or more of your seats have already been booked. Please refresh and try again."
+                })
+            
+    if backend_connection._check_showing_exists(request_dict["showingID"]) == False:
+        return jsonify({
+            "code": 401,
+            "message": "That showing does not exist."
+        })
+    
+    if backend_connection._check_user_exists(request_dict["userID"]) == False:
+        return jsonify({
+            "code": 401,
+            "message": "That user does not exist."
+        })
+
+    if total_seats == 0:
+        return jsonify({
+            "code": 401,
+            "message": "You have to select some seats."
+        })
+    
+    if child_seats < 0 or adult_seats < 0 or elderly_seats < 0:
+        return jsonify({
+            "code": 401,
+            "message": "One or your seat quantities is less than zero."
+        })
+
+    seat_types = []
+    
+    if child_seats != 0:
+        seat_types.extend(["CHILD" for _ in range(child_seats)])
+    if adult_seats != 0:
+        seat_types.extend(["ADULT" for _ in range(adult_seats)])
+    if elderly_seats != 0:
+        seat_types.extend(["ELDERLY" for _ in range(elderly_seats)])
+
+    try:
+        backend_connection.book_seats(request_dict["userID"], request_dict["bookedSeats"], request_dict["showingID"], seat_types)
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })
+
+    return jsonify({
+        "code": 200,
+    })

@@ -51,8 +51,26 @@
                 <script>markUnavailableSeats({{ unavailableSeats | tojson}})</script>
             </div>
 
-            <form id="right-column" onsubmit=bookShowing()>
-                
+            <form id="right-column" onsubmit="bookShowing('{{ userID }}', '{{ showingID }}')">
+                <div class="inline-entry">
+                    <p for="childSeats">Child Seats:</p>
+                    <input id="childSeats" type="number" step="1" value="0" required><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="adultSeats">Adult Seats:</p>
+                    <input id="adultSeats" type="number" step="1" value="0" required><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="elderlySeats">Elderly Seats:</p>
+                    <input id="elderlySeats" type="number" step="1" value="0" required><br>
+                </div>
+
+                <div class="inline">
+                    <p>Subtotal:</p>
+                    <p>PLACEHOLDER</p> <!-- TODO: make calculate price -->
+                </div>
 
                 <input id="submit" type="submit" value="Book Showing">
             </form>

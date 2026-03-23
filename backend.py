@@ -362,7 +362,6 @@ class Backend:
                     booked_seats = []
 
                 unavailable_seats.extend(booked_seats)
-                #unavailable_seats.sort(key = lambda x: f"{x[-1]}{int(x[0:-1]):02d}")
 
                 return unavailable_seats
             else:

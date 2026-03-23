@@ -73,8 +73,8 @@ def book_showing():
     return flask.render_template("visitor-book-showing.html",
                                  userID = userID,
                                  showingID = showingID,
-                                 performanceName = "PLACEHOLDER",
-                                 showingDate = "PLACEHOLDER",
+                                 performanceName = "PLACEHOLDER", # TODO: Implement get performance name
+                                 showingDate = "PLACEHOLDER", # TODO: implement get showing date
                                  userName = data.get_user_name(userID),
                                  unavailableSeats = data.get_unavailable_seats(showingID)
                                 )

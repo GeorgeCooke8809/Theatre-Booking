@@ -160,12 +160,6 @@ input{
     border-width: 1px;
 }
 
-.inline-entry{
-    box-sizing: border-box;
-    display: flex;
-    width: 100%;
-}
-
 #submit{
     all: unset;
     box-sizing: border-box;

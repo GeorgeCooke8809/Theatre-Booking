@@ -36,27 +36,25 @@ async function removeSeat(seatID){
     oldSeatButton.replaceWith(newSeatButton);
 }
 
-async function addEvent(){
+async function bookShowing(userID, showingID){
     event.preventDefault();
 
-    console.log("Trying to add event")
+    console.log("Trying to book seats")
 
-    var title = document.querySelector("#name").value;
-    var description = document.querySelector("#description").value;
-    var childPrice = document.querySelector("#childPrice").value;
-    var adultPrice = document.querySelector("#adultPrice").value;
-    var elderlyPrice = document.querySelector("#elderlyPrice").value;
+    var childSeats = document.querySelector("#childSeats").value;
+    var adultSeats = document.querySelector("#adultSeats").value;
+    var elderlySeats = document.querySelector("#elderlySeats").value;
 
-    response = await fetch("/api/add-event", {
+    response = await fetch("/api/book-showing", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                    "title": title,
-                    "description": description,
-                    "childPrice": childPrice,
-                    "adultPrice": adultPrice,
-                    "elderlyPrice": elderlyPrice,
-                    "unavailableSeats": seats
+                    "userID": userID,
+                    "showingID": showingID,
+                    "childSeats": childSeats,
+                    "adultSeats": adultSeats,
+                    "elderlySeats": elderlySeats,
+                    "bookedSeats": seats
                 })
             });
 
@@ -65,7 +63,7 @@ async function addEvent(){
 
     if (response_json.code == 200){
         console.log("Information correct, redirecting.")
-        window.location.replace("./admin-dashboard")
+        window.location.replace(`./visitor-dashboard?uid=${userID}`)
     }
     else{
         console.log("Information incorrect, flashing error.")

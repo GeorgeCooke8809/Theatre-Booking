@@ -108,15 +108,34 @@ body{
     cursor: not-allowed;
 }
 
+.booked-seat{
+   background-color: #530505;
+    color: white; 
+    cursor: not-allowed;
+}
+
 #right-column{
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 
+    justify-content: center;
+
     width: 40%;
     height: 100%;
 
     padding: 15px;
+}
+
+.inline-entry p{
+    width: 150px;
+}
+
+.inline-entry input{
+    margin: auto 0px;
+    padding: 7.5px;
+
+    border-radius: 1rem;
 }
 
 #submit{
@@ -137,4 +156,5 @@ body{
     font-weight: bolder;
 
     cursor: pointer;
+    margin-bottom: 200px;
 }

@@ -103,3 +103,9 @@ header{
     display: flex;
     align-items: center;
 }
+
+.inline-entry{
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+}
