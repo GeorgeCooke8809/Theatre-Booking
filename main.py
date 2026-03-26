@@ -76,7 +76,7 @@ def book_showing():
                                  userID = userID,
                                  showingID = showingID,
                                  performanceName = data.get_performance_name(performanceID),
-                                 showingDate = "PLACEHOLDER", # TODO: implement get showing date
+                                 showingDate = data.get_showing_date(showingID),
                                  userName = data.get_user_name(userID),
                                  unavailableSeats = data.get_unavailable_seats(showingID)
                                 )

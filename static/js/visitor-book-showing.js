@@ -90,6 +90,8 @@ function markUnavailableSeats(unavailableSeatsArray){
 }
 
 async function updateSubtotal(userID, showingID){ /* TODO: Doesn't work - always returns a 500 code. */
+    console.log("Updating price")
+
     var price_display = document.querySelector("#price-display")
 
     var childSeats = document.querySelector("#childSeats").value;

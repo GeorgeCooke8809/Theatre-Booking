@@ -479,8 +479,8 @@ class Backend:
             raise Exception("User does not exist, cannot check user admin status.")
         
         if self._check_showing_exists(showingID) == False:
-            logging.critical("Performance doesn't exist.")
-            raise Exception("Performance doesn't exist.")
+            logging.critical("Showing doesn't exist.")
+            raise Exception("Showing doesn't exist.")
         
         with self._connection() as connection:
             cursor = connection.cursor()
@@ -772,6 +772,19 @@ class Backend:
             cursor.execute("INSERT INTO dbo.Showings VALUES(?, ?, ?)", (next_id, performanceID, date))
             
         return next_id
+    
+    def get_showing_date(self, showingID: int) -> str:
+        """
+        Gets and returns as string date for the provided showingID.
+        """
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = ?", (showingID))
+            showing_date = cursor.fetchone()[0]
+
+            return showing_date.strftime("%A %d %B, %Y")
 
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, int, list[str]]]:
         """
@@ -900,7 +913,7 @@ class Backend:
 
             logging.debug(f"Deleting performance {performanceID}...")
             cursor.execute("DELETE FROM dbo.PerformanceUnavailableSeats WHERE performanceID = ?", (performanceID))
-            cursor.execute("DELETE FROM dbo.BookingSeats WHERE bookingID = (SELECT bookingID FROM dbo.Bookings WHERE showingID IN (SELECT showingID FROM dbo.Showings WHERE performanceID = ?))", (performanceID))
+            cursor.execute("DELETE FROM dbo.BookingSeats WHERE bookingID IN (SELECT bookingID FROM dbo.Bookings WHERE showingID IN (SELECT showingID FROM dbo.Showings WHERE performanceID = ?))", (performanceID))
             cursor.execute("DELETE FROM dbo.Bookings WHERE showingID IN (SELECT showingID FROM dbo.Showings WHERE performanceID = ?)", (performanceID))
             cursor.execute("DELETE FROM dbo.Showings WHERE performanceID =?", (performanceID))
             cursor.execute("DELETE FROM dbo.Performances WHERE performanceID = ?", (performanceID))

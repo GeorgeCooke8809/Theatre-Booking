@@ -156,10 +156,11 @@ def delete_performance():
         return jsonify({
             "code": 200
         })
-    except:
+    except Exception as e:
         return jsonify({
             "code": 500,
-            "message": "Something went wrong."
+            "message": "Something went wrong.",
+            "error": f"{e}"
         })
     
 @api.route("/add-showing", methods=["POST"])
@@ -283,7 +284,7 @@ def get_price():
         child_seats = int(request_dict["childSeats"])
         adult_seats = int(request_dict["adultSeats"])
         elderly_seats = int(request_dict["elderlySeats"])
-        logging.debug(f"{child_seats = } {adult_seats = } {elderly_seats = }")
+        logging.debug(f"{child_seats = } {adult_seats = } {elderly_seats = } {request_dict["showingID"] = }")
     except:
         return jsonify({
             "code": 401,
@@ -291,16 +292,17 @@ def get_price():
         })
 
     try:
-        price = backend_connection.get_booking_price(request_dict["userID"], request_dict["showingID"], request_dict["childSeats"], request_dict["adultSeats"], request_dict["elderlySeats"])
+        price = backend_connection.get_booking_price(request_dict["userID"], request_dict["showingID"], int(request_dict["childSeats"]), int(request_dict["adultSeats"]), int(request_dict["elderlySeats"]))
         
         return jsonify({
             "code": 200,
             "price": price
         })
-    except:
+    except Exception as e:
         return jsonify({
             "code": 500,
             "message": "Something went wrong fetching your price.",
-            "price": "Unknown"
+            "price": "Unknown",
+            "error": f"{e}"
         })
     
