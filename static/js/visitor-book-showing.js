@@ -88,3 +88,37 @@ function markUnavailableSeats(unavailableSeatsArray){
         }
     }
 }
+
+async function updateSubtotal(userID, showingID){ /* TODO: Doesn't work - always returns a 500 code. */
+    var price_display = document.querySelector("#price-display")
+
+    var childSeats = document.querySelector("#childSeats").value;
+    var adultSeats = document.querySelector("#adultSeats").value;
+    var elderlySeats = document.querySelector("#elderlySeats").value;
+
+    response = await fetch("/api/get-price", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                    "userID": userID,
+                    "showingID": showingID,
+                    "childSeats": childSeats,
+                    "adultSeats": adultSeats,
+                    "elderlySeats": elderlySeats,
+                })
+            });
+
+    response_json = await response.json()
+    console.log(response_json)
+
+    if (response_json.code == 200){
+        console.log("Got price")
+    }
+    else{
+        console.log("Error, flashing error.")
+        
+        flashMessage(response_json.message)
+    }
+
+    price_display.textContent = response_json.price
+}

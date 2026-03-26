@@ -178,10 +178,14 @@ def add_showing():
                 "code": 401,
                 "message": "That performance does not exist."
             })
-        logging.debug("Performance does exists, continuing.")
+
         date = request_dict["date"]
 
         backend_connection.add_showing(performanceID, datetime.strptime(date, "%Y-%m-%d"))
+
+        return jsonify({
+            "code": 200
+        })
     except Exception as e:
         logging.critical(f"Something went wrong: {e}")
         return jsonify({
@@ -268,3 +272,35 @@ def book_showing():
     return jsonify({
         "code": 200,
     })
+
+@api.route("/get-price", methods=["POST"])
+def get_price():
+    logging.debug("Get price triggered")
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        child_seats = int(request_dict["childSeats"])
+        adult_seats = int(request_dict["adultSeats"])
+        elderly_seats = int(request_dict["elderlySeats"])
+        logging.debug(f"{child_seats = } {adult_seats = } {elderly_seats = }")
+    except:
+        return jsonify({
+            "code": 401,
+            "message": "One or more of your seat type quantities are not numbers."
+        })
+
+    try:
+        price = backend_connection.get_booking_price(request_dict["userID"], request_dict["showingID"], request_dict["childSeats"], request_dict["adultSeats"], request_dict["elderlySeats"])
+        
+        return jsonify({
+            "code": 200,
+            "price": price
+        })
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong fetching your price.",
+            "price": "Unknown"
+        })
+    

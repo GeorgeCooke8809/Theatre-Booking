@@ -68,12 +68,14 @@ def book_showing():
     userID = flask.request.args.get("uid", default="None", type=int)
     showingID = flask.request.args.get("sid", default="None", type=int)
 
+    performanceID = data.get_performanceID_from_showing(showingID)
+
     logging.debug(f"{data.get_unavailable_seats(showingID) = }")
 
     return flask.render_template("visitor-book-showing.html",
                                  userID = userID,
                                  showingID = showingID,
-                                 performanceName = "PLACEHOLDER", # TODO: Implement get performance name
+                                 performanceName = data.get_performance_name(performanceID),
                                  showingDate = "PLACEHOLDER", # TODO: implement get showing date
                                  userName = data.get_user_name(userID),
                                  unavailableSeats = data.get_unavailable_seats(showingID)
