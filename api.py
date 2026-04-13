@@ -315,3 +315,21 @@ def print_booking():
     backend_connection.generate_pdf(bookingID)
 
     return flask.send_file("Ticket.pdf", "application/pdf", as_attachment=True, download_name="Ticket.pdf")
+
+@api.route("/delete-showing", methods = ["POST"])
+def delete_showing():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        backend_connection.delete_showing(request_dict["showingID"])
+
+        return jsonify({
+            "code": 200
+        })
+    
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })

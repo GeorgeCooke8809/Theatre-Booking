@@ -295,7 +295,7 @@ class Backend:
             logging.critical("Showing does not exist.")
             raise Exception("Showing does not exist.")
 
-        with self._connection as connection:
+        with self._connection() as connection:
             cursor = connection.cursor()
 
             cursor.execute("DELETE FROM dbo.Showings WHERE showingID = ?", (showingID))

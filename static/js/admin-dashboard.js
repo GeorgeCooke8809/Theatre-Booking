@@ -50,3 +50,28 @@ async function addShowing(date, performanceID){
         flashMessage(response_json.message)
     }
 }
+
+async function deleteShowing(showingID){
+    event.preventDefault()
+
+    response = await fetch("/api/delete-showing", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                    "showingID": showingID
+                })
+            });
+
+    response_json = await response.json()
+    console.log(response_json)
+
+    if (response_json.code == 200){
+        console.log("Information correct, redirecting.")
+        window.location.replace("./admin-dashboard")
+    }
+    else{
+        console.log("Information incorrect, flashing error.")
+        
+        flashMessage(response_json.message)
+    }
+}

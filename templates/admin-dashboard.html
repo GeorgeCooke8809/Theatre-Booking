@@ -41,8 +41,13 @@
 
                 <hr>
 
-                {% for showing in showings[index]: %} <!-- TODO: Add delete showing button -->
-                    <h2 class="showing-date">{{ showing[1] }}</h2>
+                {% for showing in showings[index]: %}
+                    <div class="inline-split">
+                        <h2 class="showing-date">{{ showing[1] }}</h2>
+                        <form onsubmit='deleteShowing("{{ showing[0]}}")'>
+                            <button class="delete-showing-button" type="submit">DELETE SHOWING</button>
+                        </form>
+                    </div>
                     <div class="inline showing-detail-text">
                         <h3>Seats Allocated (Including Unavailable): </h3> <p>{{ 200-showing[2] }}/200</p>
                     </div>

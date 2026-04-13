@@ -116,3 +116,29 @@ hr{
 input{
     cursor: pointer;
 }
+
+.inline-split{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.delete-showing-button{
+    all: unset;
+    font-weight: bolder;
+    box-sizing: border-box;
+    width: 20%;
+    min-width: 250px;
+    background-color: #831313;
+    color: white;
+    border-radius: 2rem;
+    text-align: center;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    margin: 10px 0px;
+}
+
+.delete-showing-button:hover{
+    background-color: #941919;
+}
