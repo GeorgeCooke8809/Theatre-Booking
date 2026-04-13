@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, flash
+import flask
 from backend import Backend
 import logging
 from datetime import datetime
@@ -263,7 +264,7 @@ def book_showing():
         seat_types.extend(["ELDERLY" for _ in range(elderly_seats)])
 
     try:
-        backend_connection.book_seats(request_dict["userID"], request_dict["bookedSeats"], request_dict["showingID"], seat_types)
+        bookingID = backend_connection.book_seats(request_dict["userID"], request_dict["bookedSeats"], request_dict["showingID"], seat_types)
     except:
         return jsonify({
             "code": 500,
@@ -272,6 +273,7 @@ def book_showing():
 
     return jsonify({
         "code": 200,
+        "bookingID": bookingID
     })
 
 @api.route("/get-price", methods=["POST"])
@@ -306,3 +308,10 @@ def get_price():
             "error": f"{e}"
         })
     
+@api.route("/print-ticket", methods = ["POST"]) # Triggered by the print booking button in the admin view bookings page
+def print_booking():
+    bookingID = flask.request.args.get("bid", default="None", type=str)
+
+    backend_connection.generate_pdf(bookingID)
+
+    return flask.send_file("Ticket.pdf", "application/pdf", as_attachment=True, download_name="Ticket.pdf")

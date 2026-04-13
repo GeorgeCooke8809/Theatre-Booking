@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Events</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-thank-you.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <header> 
+        <nav id="navigation-bar">
+            <ul>
+                <li><a href="./visitor-dashboard?uid={{ userID }}" class="nav-button current">Events</a></li>
+                <li><a href="./visitor-bookings?uid={{ userID }}" class="nav-button">My Bookings</a></li>
+            </ul>
+        </nav>
+
+        <a id="logout" class="nav-button" href=".">{{ userName }}</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+
+        <h2 id="title">Thank You!</h2>
+
+        <p >Thank you for your purchase of {{ no_tickets[0] + no_tickets[1] + no_tickets[2] }} ticket(s) to see {{ performance_name }} on {{ showing_date}}. We appreciate your interest and look forward to seeing you there!</p>
+        <p>Doors open at 7:30 PM and the showing starts at 8:15 PM. Drinks will be served in the Cafe from 7:30 PM to 8:00 PM as well as in the intermission.</p>
+
+        <h4>Order Summary:</h4>
+        <p class="price-label">Child Seats: {{ no_tickets[0] }}</p>
+        <p class="price-label">Adult Seats: {{ no_tickets[1] }}</p>
+        <p class="price-label">Elderly Seats: {{ no_tickets[2] }}</p>
+
+        <p id="total-paid-label">Total Paid: {{ price }} (cleared)</p>
+
+        <form method="post" action="/api/print-ticket?bid={{ bookingID }}">
+            <button id="submit" type="submit">PRINT TICKET</button>
+        </form>
+    </body>
+</html>

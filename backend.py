@@ -416,9 +416,9 @@ class Backend:
             
         return True
 
-    def book_seats(self, userID: int, seatIDs: list[str], showingID: int, seat_types: list[str]) -> None:
+    def book_seats(self, userID: int, seatIDs: list[str], showingID: int, seat_types: list[str]) -> int:
         """
-        Books the specified seat for the specified showing
+        Books the specified seat for the specified showing and returns the bookingID
         """
         for seatID in seatIDs:
             if self._check_seat_available(seatID, showingID) == False:
@@ -468,6 +468,8 @@ class Backend:
 
                 cursor.execute("INSERT INTO dbo.BookingSeats VALUES(?, ?, ?, ?)", (next_booking_seat_id, next_booking_id, seatID, seat_type))
                 cursor.commit()
+
+        return next_booking_id
 
     def get_booking_price(self, userID: int, showingID: int, no_child_seats: int, no_adult_seats: int, no_elderly_seats: int) -> str:
         """
@@ -937,7 +939,79 @@ class Backend:
                 return True
             else:
                 return False
+            
+    def get_booking_showing(self, bookingID: int) -> int:
+        """
+        Gets and returns the showingID of the given bookingID
+        """
 
+        if self._check_booking_exists(bookingID) == False:
+            logging.critical("Booking does not exist, cannot check showingID")
+            raise Exception("Booking does not exist, cannot check showingID")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT showingID FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
+            return int(cursor.fetchone()[0])
+
+    def get_showing_performance(self, showingID: int) -> int:
+        """
+        Gets and returns the performanceID of the given showingID.
+        """
+
+        if self._check_showing_exists(showingID) == False:
+            logging.critical("Showing does not exist, cannot check performanceID")
+            raise Exception("Showing does not exist, cannot check performanceID")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT performanceID FROM dbo.Showings WHERE showingID = ?", (showingID))
+            return int(cursor.fetchone()[0])
+        
+    def get_booking_ticket_type_distributions(self, bookingID: int) -> tuple[int, int, int]:
+        """
+        Gets and returns the distribution of a booking's tickets types and returns in the the format (child tickets, adult tickets, elderly tickets)
+        """
+
+        if self._check_booking_exists(bookingID) == False:
+            logging.critical("Booking does not exist, cannot check distributions")
+            raise Exception("Booking does not exist, cannot check distributions")
+
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT bookingType from dbo.BookingSeats WHERE bookingID = ?", (bookingID))
+            seats = cursor.fetchall()
+
+        child, adult, elderly = 0, 0, 0
+
+        for seat in seats:
+            seat = seat[0]
+            if seat == "CHILD": child += 1
+            elif seat =="ADULT": adult += 1
+            elif seat == "ELDERLY": elderly += 1
+            else:
+                logging.critical("Unknown seat type when getting distributions.")
+                raise ValueError("Unknown seat type when getting distributions.")
+            
+        return (child, adult, elderly)
+    
+    def get_booking_user(self, bookingID: int) -> int:
+        """
+        Gets and returns the userID for the provided bookingID.
+        """
+
+        if self._check_booking_exists(bookingID) == False:
+            logging.critical("Booking does not exist, cannot check userID")
+            raise Exception("Booking does not exist, cannot check userID")
+        
+        with self._connection() as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT userID FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
+            return cursor.fetchone()
 
 logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")

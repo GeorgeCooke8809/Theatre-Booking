@@ -1,0 +1,46 @@
+p{
+    font-size: 25px;
+    margin: 10px 0px;
+}
+
+#title{
+    font-size: 60px;
+    margin: 10px 0px;
+    padding-top: 10px;
+}
+
+h4{
+    font-size: 30px;
+    margin: 10px 0px;
+}
+
+.price-label{
+    font-size: 25px;
+    margin: 0px;
+}
+
+#total-paid-label{
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#submit{
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #182041;
+    color: white;
+
+    border-radius: 1rem;
+
+    font-size: 30px;
+    font-weight: bolder;
+
+    cursor: pointer;
+    margin-bottom: 200px;
+}

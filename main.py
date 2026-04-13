@@ -46,6 +46,7 @@ def visitor_dashboard():
 
 @app.route("/visitor-bookings", methods=["GET"])
 def visitor_bookings():
+    #TODO: Add Visitor Bookings Page - Page to show all upcoming bookings that a user has.
     userID = flask.request.args.get("uid", default="None", type=int)
 
     return f"<h1>Visitor bookings - {userID = }</h1>"
@@ -81,6 +82,24 @@ def book_showing():
                                  unavailableSeats = data.get_unavailable_seats(showingID)
                                 )
 
+@app.route("/thank-you")
+def thank_you_page():
+    bookingID = flask.request.args.get("bid", default="None", type=int)
+    userID = flask.request.args.get("uid", default="None", type=int)
+
+    showingID = data.get_booking_showing(bookingID)
+    performanceID = data.get_showing_performance(showingID)
+    tickets = data.get_booking_ticket_type_distributions(bookingID)
+
+    return flask.render_template("visitor-thank-you.html",
+                                 userID = userID,
+                                 bookingID = bookingID,
+                                 no_tickets = tickets,
+                                 performance_name = data.get_performance_name(performanceID),
+                                 showing_date = data.get_showing_date(showingID),
+                                 price = data.get_booking_price(data.get_booking_user(bookingID), showingID, tickets[0], tickets[1], tickets[2])
+                                 )
+
 # --------------------------- Admin Sections ---------------------------
 
 @app.route("/admin-dashboard", methods = ["GET"])
@@ -107,6 +126,7 @@ def admin_add_event():
 
 @app.route("/admin-users", methods = ["GET"])
 def admin_users():
+    # TODO: Add Admin Users Page - Page to show all of the current users as well as controls to change their user type and delete.
     return "<h1> Admin Users </h1>"
 
 # --------------------------- Main Running ---------------------------

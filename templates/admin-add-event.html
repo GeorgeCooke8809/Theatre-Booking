@@ -37,7 +37,7 @@
                 <div id="seats">
                     {% for i in range(1, 11): %}
                         <div class="seat-row">
-                            {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T"]: %}
+                            {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]: %}
                                 <button class="seat-button available-seat" id="{{ i }}{{ j }}" onclick="addSeat('{{ i }}{{ j }}')">{{ i }}{{ j }}</button>
 
                                 {% if j == "J": %}

@@ -63,7 +63,7 @@ async function bookShowing(userID, showingID){
 
     if (response_json.code == 200){
         console.log("Information correct, redirecting.")
-        window.location.replace(`./visitor-dashboard?uid=${userID}`)
+        window.location.replace(`./thank-you?bid=${response_json.bookingID}&&uid=${userID}`)
     }
     else{
         console.log("Information incorrect, flashing error.")
@@ -89,7 +89,7 @@ function markUnavailableSeats(unavailableSeatsArray){
     }
 }
 
-async function updateSubtotal(userID, showingID){ /* TODO: Doesn't work - always returns a 500 code. */
+async function updateSubtotal(userID, showingID){
     console.log("Updating price")
 
     var price_display = document.querySelector("#price-display")
