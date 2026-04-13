@@ -790,7 +790,7 @@ class Backend:
 
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, int, list[str]]]:
         """
-        Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, empty seats: int, showing attendees (names): list)]
+        Gets and returns all showings for an event and returns in the following format: [(showingID: int, showing date: str, empty seats: int, revenue, showing attendees (names): list)]
         The showing attendees will be made up of the following tuples [(userID, user first name, user last name, user phone)] and will be sorted by ascending surname alphabetically
         """
         if self._check_performance_exists(performanceID) == False:
@@ -835,7 +835,7 @@ class Backend:
 
                 remaining_seats -= len(self.get_unavailable_seats(showingID))
 
-                showings.append((showingID, showing_date, remaining_seats, attendees))
+                showings.append((showingID, showing_date, remaining_seats, self.calculate_showing_revenue(showingID), attendees))
 
             logging.debug(f"{showings = }")
 
@@ -1012,6 +1012,56 @@ class Backend:
 
             cursor.execute("SELECT userID FROM dbo.Bookings WHERE bookingID = ?", (bookingID))
             return cursor.fetchone()
+        
+    def calculate_showing_revenue(self, showingID: int) -> str:
+        """
+        Gets and returns the total revenue for the given showing.
+        """
+
+        if self._check_showing_exists(showingID) == False:
+            logging.critical("Showing does not exist, cannot get revenue")
+            raise Exception("Showing does not exist, cannot get revenue")
+        
+        with self._connection() as connection:
+            cursor = connection.cursor()
+            
+            cursor.execute("SELECT bookingID, userID FROM dbo.Bookings WHERE showingID = ?", (showingID))
+            bookingIDs = cursor.fetchall()
+
+            bookingIDs_array = []
+
+            for bookingID in bookingIDs:
+                cursor.execute("SELECT userType FROM dbo.Users WHERE userID = ?", (bookingID[1]))
+                if cursor.fetchone()[0] != "SPECIAL":
+                    bookingIDs_array.append(str(bookingID[0]))
+
+            if len(bookingIDs_array) == 0:
+                return "£0.00"
+
+            in_string = f"({",".join(bookingIDs_array)})"
+            logging.debug(f"{in_string = }")
+
+            cursor.execute(f"SELECT bookingType FROM dbo.BookingSeats WHERE bookingID IN {in_string}")
+            seat_types = cursor.fetchall()
+
+            child, adult, elderly = 0, 0, 0
+
+            for seat in seat_types:
+                seat = seat[0]
+                if seat == "CHILD": child += 1
+                elif seat =="ADULT": adult += 1
+                elif seat == "ELDERLY": elderly += 1
+                else:
+                    logging.critical("Unknown seat type when getting distributions.")
+                    raise ValueError("Unknown seat type when getting distributions.")
+                
+            performanceID = self.get_performanceID_from_showing(showingID)
+            cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (performanceID))
+            prices = cursor.fetchone()
+
+            total = (child * prices[0]) + (adult * prices[1]) + (adult * prices[2])
+
+        return f"£{total:.2f}"
 
 logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")

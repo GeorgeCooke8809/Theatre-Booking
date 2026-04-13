@@ -48,13 +48,13 @@
                     </div>
                     
                     <div class="inline showing-detail-text">
-                        <h3>Revenue: </h3> <p>PLACEHOLDER</p> <!-- TODO: Make calculate total revenue made from a showing - Will require a new function in backend. -->
+                        <h3>Revenue: </h3> <p>{{ showing[3] }}</p>
                     </div>
 
                     <details class="attendees-details">
                         <summary>Attendees</summary>
 
-                        {% for attendee in showing[3] %}
+                        {% for attendee in showing[4] %}
                             <p>{{ attendee[1] }} {{ attendee[2] }} - {{ attendee[3] }}</p>
                         {% endfor %}
                     </details>
