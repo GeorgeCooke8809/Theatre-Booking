@@ -49,7 +49,11 @@ def visitor_bookings():
     #TODO: Add Visitor Bookings Page - Page to show all upcoming bookings that a user has.
     userID = flask.request.args.get("uid", default="None", type=int)
 
-    return f"<h1>Visitor bookings - {userID = }</h1>"
+    return flask.render_template("visitor-my-bookings.html",
+                                 userID = userID,
+                                 userName = data.get_user_name(userID),
+                                 bookings = data.get_user_bookings(userID)
+                                 )
 
 @app.route("/performance-showings", methods = ["GET"])
 def performance_showings():

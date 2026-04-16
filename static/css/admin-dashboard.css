@@ -117,12 +117,6 @@ input{
     cursor: pointer;
 }
 
-.inline-split{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
 .delete-showing-button{
     all: unset;
     font-weight: bolder;

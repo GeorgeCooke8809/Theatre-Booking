@@ -505,7 +505,7 @@ class Backend:
     def get_user_bookings(self, userID: int, date_from: datetime.date = datetime.date.today()) -> list[tuple[int, str]]:
         """
         Gets and returns a list of all bookings for a user after the specified date (defaults to today).
-        Returns in format [(bookingID: int, booking title: str)]
+        Returns in format [(bookingID: int, performance title: str, booking date: str)]
         """
         if self._check_user_exists(userID) == False:
             logging.critical("User does not exist")
@@ -532,7 +532,12 @@ class Backend:
                 cursor.execute("SELECT title FROM dbo.Performances WHERE performanceID IN (SELECT performanceID FROM dbo.Showings WHERE showingID = ?)", (booking[1]))
                 performance_title = cursor.fetchone()[0]
 
-                bookings.append((bookingID, performance_title))
+                cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = (SELECT showingID FROM dbo.Bookings WHERE bookingID = ?)", (bookingID))
+                showing_date = cursor.fetchone()[0]
+
+                showing_date = showing_date.strftime("%A %d %B, %Y")
+
+                bookings.append((bookingID, performance_title, showing_date))
             
         return bookings
 

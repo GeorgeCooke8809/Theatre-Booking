@@ -5,6 +5,8 @@ from datetime import date
 
 from backend import Backend
 
+# TODO: Fix unit tests - A lot of the unit tests are failing since some changes were made. The tests may need updating (one thing was changed from performanceID to showingID), others may be broken because the backend code it broken
+
 class Test: # parent class to all test classes with regularly repeated code
     @pytest.fixture(autouse = True)
     def create_backend(self):
