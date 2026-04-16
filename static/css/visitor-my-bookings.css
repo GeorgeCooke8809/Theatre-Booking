@@ -1,0 +1,38 @@
+#pageheading{
+    margin-bottom: 0px;
+}
+
+.booking-info-button{
+    all: unset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #182041;
+    padding: 10px 20px;
+    border-radius: 1rem;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    max-height: 30px;
+    margin: auto 0px;
+}
+
+.booking-info-button:hover{
+    background-color: #1e284e;
+}
+
+.performance-name{
+    font-size: 35px;
+    margin: 0px;
+}
+
+.showing-date{
+    margin: 0px;
+    font-style: italic;
+}
+
+.inline-split{
+    margin-bottom: 5px;
+}

@@ -31,11 +31,11 @@
         {% for booking in bookings %}
             <div class="inline-split">
                 <div>
-                    <h3>{{ booking[1] }}</h3>
-                    <p>{{ booking[2] }}</p>
+                    <h3 class="performance-name">{{ booking[1] }}</h3>
+                    <p class="showing-date">{{ booking[2] }}</p>
                 </div>
 
-                <a id="booking-info-button" href="./thank-you?bid={{ booking[0] }}&&uid={{ userID }}">More Details</a>
+                <a class="booking-info-button" href="./thank-you?bid={{ booking[0] }}&&uid={{ userID }}">More Details</a>
             </div>
         {% endfor %}
         <hr>
