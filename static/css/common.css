@@ -125,3 +125,26 @@ header{
     flex-direction: row;
     justify-content: space-between;
 }
+
+.basic-button{ /* TODO: Implement across most pages */
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    text-align: center;
+
+    width: 100%;
+    padding: 10px;
+    background-color: #182041;
+    color: white;
+
+    border-radius: 1rem;
+
+    font-size: 30px;
+    font-weight: bolder;
+
+    cursor: pointer;
+}
+
+.basic-button:hover{
+    background-color: #222c56;
+}

@@ -52,6 +52,12 @@ def create_account():
             "message": "Invalid email format."
         })
     
+    if backend_connection.check_email_in_database(request_dict["email"]) == True:
+        return jsonify({
+            "code": 401,
+            "message": "Email already in database"
+        })
+    
     if request_dict["password"] != request_dict["repeatPassword"]:
         return jsonify({
             "code": 401,

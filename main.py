@@ -46,7 +46,6 @@ def visitor_dashboard():
 
 @app.route("/visitor-bookings", methods=["GET"])
 def visitor_bookings():
-    #TODO: Add Visitor Bookings Page - Page to show all upcoming bookings that a user has.
     userID = flask.request.args.get("uid", default="None", type=int)
 
     return flask.render_template("visitor-my-bookings.html",
@@ -130,8 +129,9 @@ def admin_add_event():
 
 @app.route("/admin-users", methods = ["GET"])
 def admin_users():
-    # TODO: Add Admin Users Page - Page to show all of the current users as well as controls to change their user type and delete.
-    return "<h1> Admin Users </h1>"
+    return flask.render_template("admin-users.html",
+                                 users = data.get_all_users()
+                                 )
 
 # --------------------------- Main Running ---------------------------
 
