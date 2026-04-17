@@ -1,11 +1,14 @@
-async function deletePerformance(performanceID){
-    event.preventDefault()
+async function updateUser(userID){
+    event.preventDefault();
 
-    response = await fetch("/api/delete-performance", {
+    var new_type = document.querySelector(`#update-${userID}`).querySelector(".visitor-new-type").value;
+
+    response = await fetch("/api/update-user-type", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                    "performanceID": performanceID
+                    "userID": userID,
+                    "newType": new_type
                 })
             });
 
@@ -14,7 +17,7 @@ async function deletePerformance(performanceID){
 
     if (response_json.code == 200){
         console.log("Information correct, redirecting.")
-        window.location.replace("./admin-dashboard")
+        window.location.replace("./admin-users")
     }
     else{
         console.log("Information incorrect, flashing error.")
@@ -23,10 +26,10 @@ async function deletePerformance(performanceID){
     }
 }
 
-async function addShowing(date, performanceID){
-    event.preventDefault()
+async function search(term){
+    event.preventDefault();
 
-    console.log(date)
+    term = document.querySelector(`#update-${userID}`).querySelector(".visitor-new-type").value
 
     response = await fetch("/api/add-showing", {
             method: "POST",

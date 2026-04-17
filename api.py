@@ -339,3 +339,44 @@ def delete_showing():
             "code": 500,
             "message": "Something went wrong."
         })
+    
+@api.route("/update-user-type", methods = ["POST"])
+def update_user_type():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    if backend_connection._check_user_exists(request_dict["userID"]) == False:
+        return jsonify({
+            "code": 401,
+            "message": "User does not exist."
+        })
+
+    if request_dict["newType"] == "DELETE":
+        try:
+            backend_connection.delete_user(request_dict["userID"])
+
+            return jsonify({
+                "code": 200,
+            })
+        except:
+            return jsonify({
+                "code": 500,
+                "message": "Could not delete user."
+            })
+    elif request_dict["newType"] in ["VISITOR", "SPECIAL", "ADMIN"]:
+        try: 
+            backend_connection.change_user_type(request_dict["userID"], request_dict["newType"])
+
+            return jsonify({
+                "code": 200,
+            })
+        except:
+            return jsonify({
+                "code": 500,
+                "message": "Could not update user type."
+            })
+    else:
+        return jsonify({
+            "code": 401,
+            "message": "Invalid user type."
+        })
