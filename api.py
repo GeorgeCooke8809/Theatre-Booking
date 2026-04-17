@@ -380,3 +380,21 @@ def update_user_type():
             "code": 401,
             "message": "Invalid user type."
         })
+    
+@api.route("/search-users", methods = ["POST"])
+def search_users():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        results = backend_connection.search_user(request_dict["term"])
+
+        return jsonify({
+            "code": 200,
+            "elements": results
+        })
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })

@@ -10,7 +10,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
 
         <script defer src="static/js/common.js"></script>
-        <script defer src="static/js/admin-users.js"></script>
+        
     </head>
 
     <header> 
@@ -29,7 +29,7 @@
         <h1 id="page-heading">Users:<hr></h1>
 
         <form id="search" onsubmit="event.preventDefault()">
-            <input type="search" onchange="search()"> <!-- TODO: Make trigger on change -->
+            <input type="search" oninput="search()" id="search-field">
         </form>
         
         <div id="users-section">
@@ -37,7 +37,7 @@
                 <div class="user-card inline-split">
                     <h4>{{ user[1] }} {{ user[2] }} - {{ user[3] }}</h4>
 
-                    <form class="inline user-type-form" id="update-{{ user[0] }}" onsubmit="updateUser('{{ user[0] }}')"> <!-- TODO: add functionality to users form -->
+                    <form class="inline user-type-form" id="update-{{ user[0] }}" onsubmit="updateUser('{{ user[0] }}')">
                         <select name="user-type" name="user-type" class="visitor-new-type">
                             {% if user[4] == "VISITOR" %}
                                 <option value="VISITOR" selected="selected">Visitor*</option>
@@ -68,4 +68,6 @@
 
         <div id="flash-container"></div>
     </body>
+
+    <script defer src="static/js/admin-users.js"></script>
 </html>

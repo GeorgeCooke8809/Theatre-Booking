@@ -1072,11 +1072,14 @@ class Backend:
         """
         Gets and returns a list of all users that fit the search criteria (the provided string is alike to at least of of: fName, lName, or phone) and returns in format [(userID, fName, lName, phone, userType)]
         """
+
+        new_text = f"%{text}%"
+
         with self._connection() as connection:
             cursor = connection.cursor()
 
             logging.debug("Getting users...")
-            cursor.execute("SELECT userID, fName, lName, phone, userType FROM dbo.Users WHERE fName LIKE ? OR lName LIKE ? OR phone LIKE ?", (text, text, text))
+            cursor.execute("SELECT userID, fName, lName, phone, userType FROM dbo.Users WHERE fName LIKE ? OR lName LIKE ? OR phone LIKE ?", (new_text, new_text, new_text)) # TODO: Make work with % - Changed to have % symbol but now doesn't work
             users = cursor.fetchall()
 
             users = [tuple(row) for row in users]
