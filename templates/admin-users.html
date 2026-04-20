@@ -38,7 +38,7 @@
                     <h4>{{ user[1] }} {{ user[2] }} - {{ user[3] }}</h4>
 
                     <form class="inline user-type-form" id="update-{{ user[0] }}" onsubmit="updateUser('{{ user[0] }}')">
-                        <select name="user-type" name="user-type" class="visitor-new-type">
+                        <select name="user-type" class="visitor-new-type">
                             {% if user[4] == "VISITOR" %}
                                 <option value="VISITOR" selected="selected">Visitor*</option>
                             {% else %}
