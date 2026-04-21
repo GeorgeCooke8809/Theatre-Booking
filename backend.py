@@ -1079,12 +1079,9 @@ class Backend:
             cursor = connection.cursor()
 
             logging.debug("Getting users...")
-            cursor.execute("SELECT userID, fName, lName, phone, userType FROM dbo.Users WHERE fName LIKE ? OR lName LIKE ? OR phone LIKE ?", (new_text, new_text, new_text)) # TODO: Make work with % - Changed to have % symbol but now doesn't work
+            cursor.execute("SELECT userID, fName, lName, phone, userType FROM dbo.Users WHERE fName LIKE ? OR lName LIKE ? OR phone LIKE ?", (new_text, new_text, new_text))
             users = cursor.fetchall()
 
             users = [tuple(row) for row in users]
             
         return users
-
-logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
-                        format="%(asctime)s - %(levelname)s - %(message)s")
