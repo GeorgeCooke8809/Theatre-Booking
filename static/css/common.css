@@ -1,0 +1,150 @@
+#page-heading{
+    font-size: 70px;
+    margin: 0px;
+    margin-top: 15px;
+}
+
+#page-heading hr{
+    margin: 0px;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    width: 80vw;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+header{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
+    background-color: #182041;
+}
+
+#navigation-bar{
+    padding: 10px 7px;
+}
+
+#navigation-bar ul{
+    display: flex;
+    align-items: center;
+    padding: 0rem;
+    margin: 0rem;
+    height: 50px;
+
+    justify-content: space-between;
+}
+
+#navigation-bar li{
+    all: unset;
+
+    padding: 8px;
+    padding-right: 15px;
+}
+
+.nav-button{
+    all: unset;
+
+    display: flex;
+    align-items: center;
+
+    color: white;
+    font-size: 40px;
+    font-weight: bolder;
+
+    cursor: pointer;
+}
+
+.nav-button:hover{
+    color: #dcdbdb;
+}
+.current{
+    text-decoration: underline;
+}
+
+#header-spacer{
+    height: 70px;
+}
+
+#logout{
+    padding-right: 15px;
+}
+
+.note{
+    font-size: 10px;
+    font-style: italic;
+}
+
+#flash-container{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+.flash-message{
+    display: flex;
+    align-items: center;
+
+    border-left-style: solid;
+    border-left-color: #872c2c;
+    border-left-width: 7.5px;
+
+    width: 500px;
+    min-height: 50px;
+
+    padding: 5px;
+    margin-bottom: 5px;
+
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    background-color: #ce5555;
+    color: white;
+}
+
+.inline{
+    display: flex;
+    align-items: center;
+}
+
+.inline-entry{
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+}
+
+.inline-split{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.basic-button{ /* TODO: Implement across most pages */
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    text-align: center;
+
+    width: 100%;
+    padding: 10px;
+    background-color: #182041;
+    color: white;
+
+    border-radius: 1rem;
+
+    font-size: 30px;
+    font-weight: bolder;
+
+    cursor: pointer;
+}
+
+.basic-button:hover{
+    background-color: #222c56;
+}

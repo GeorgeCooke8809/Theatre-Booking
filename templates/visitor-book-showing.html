@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Admin Add Event</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-book-showing.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script src="static/js/visitor-book-showing.js"></script>
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <header> 
+        <nav id="navigation-bar">
+            <ul>
+                <li><a href="./visitor-dashboard?uid={{ userID }}" class="nav-button current">Events</a></li>
+                <li><a href="./visitor-bookings?uid={{ userID }}" class="nav-button">My Bookings</a></li>
+            </ul>
+        </nav>
+
+        <a id="logout" class="nav-button" href=".">{{ userName }}</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+        
+        <div id="columns">
+            <div id="left-column">
+                <h1>{{ performanceName }}</h1>
+                <h2>{{ showingDate }}</h2>
+
+                <div id="screen">Stage/Screen</div>
+
+                <div id="seats">
+                    {% for i in range(1, 11): %}
+                        <div class="seat-row">
+                            {% for j in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]: %}
+                                <button class="seat-button available-seat" id="{{ i }}{{ j }}" onclick="addSeat('{{ i }}{{ j }}')">{{ i }}{{ j }}</button>
+                                
+                                {% if j == "J": %}
+                                    <div class="isle"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <script>markUnavailableSeats({{ unavailableSeats | tojson}})</script>
+            </div>
+
+            <form id="right-column" onsubmit="bookShowing('{{ userID }}', '{{ showingID }}')">
+                <div class="inline-entry">
+                    <p for="childSeats">Child Seats:</p>
+                    <input id="childSeats" type="number" step="1" value="0" onchange="updateSubtotal('{{ userID }}', '{{ showingID }}')" required><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="adultSeats">Adult Seats:</p>
+                    <input id="adultSeats" type="number" step="1" value="0" onchange="updateSubtotal('{{ userID }}', '{{ showingID }}')" required><br>
+                </div>
+
+                <div class="inline-entry">
+                    <p for="elderlySeats">Elderly Seats:</p>
+                    <input id="elderlySeats" type="number" step="1" value="0" onchange="updateSubtotal('{{ userID }}', '{{ showingID }}')" required><br>
+                </div>
+
+                <div class="inline">
+                    <p>Subtotal:</p>
+                    <p id="price-display">£0.00</p>
+                </div>
+
+                <input id="submit" type="submit" value="Book Showing">
+            </form>
+        </div>
+
+        <div id="flash-container"></div>
+    </body>
+</html>

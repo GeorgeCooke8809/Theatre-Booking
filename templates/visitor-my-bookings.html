@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Events</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/visitor-my-bookings.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+    </head>
+
+    <header> 
+        <nav id="navigation-bar">
+            <ul>
+                <li><a href="./visitor-dashboard?uid={{ userID }}" class="nav-button">Events</a></li>
+                <li><a href="./visitor-bookings?uid={{ userID }}" class="nav-button current">My Bookings</a></li>
+            </ul>
+        </nav>
+
+        <a id="logout" class="nav-button" href=".">{{ userName }}</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+
+        <h1 id="pageheading">Bookings:<hr></h1>
+
+        {% for booking in bookings %}
+            <div class="inline-split">
+                <div>
+                    <h3 class="performance-name">{{ booking[1] }}</h3>
+                    <p class="showing-date">{{ booking[2] }}</p>
+                </div>
+
+                <a class="booking-info-button" href="./thank-you?bid={{ booking[0] }}&&uid={{ userID }}">More Details</a>
+            </div>
+        {% endfor %}
+        <hr>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+.performance-top-row{
+    justify-content: space-between;
+}
+
+.performance-top-row h2{
+    margin: 0px;
+}
+
+.performance-top-row a{
+    all: unset;
+    display: flex;
+
+    background-color: #182041;
+    padding: 10px 20px;
+    border-radius: 1rem;
+    color: white;
+    cursor: pointer;
+}
+
+.performance-top-row a:hover{
+    background-color: #1e284e;
+}

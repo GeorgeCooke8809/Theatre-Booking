@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Admin Dashboard</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/admin-dashboard.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+        <script defer src="static/js/admin-dashboard.js"></script>
+    </head>
+
+    <header> 
+            <nav id="navigation-bar">
+                <ul>
+                    <li><a href="#" class="nav-button current">Dashboard</a></li>
+                    <li><a href="./admin-users" class="nav-button">Users</a></li>
+                </ul>
+            </nav>
+
+            <a id="logout" class="nav-button" href=".">ADMIN</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+        <a id="add-event" href="./admin-add-event">Add Performance</a>
+
+        {% for index in range(length): %}
+            <details class="performance-details">
+                <summary>{{ performances[index][1] }}</summary>
+                <button class="delete-performance" onclick='deletePerformance("{{ performances[index][0] }}")'>Delete Performance</button>
+                
+                <div class="add-showing-container">
+                    <h3 class="new-showing-subtitle">Add new showing:</h3>
+                    <input onchange='addShowing(this.value, "{{ performances[index][0] }}")' type="date" onkeydown="return false"> <!-- TODO: Change to require a submit button -->
+                </div>
+
+
+                <hr>
+
+                {% for showing in showings[index]: %}
+                    <div class="inline-split">
+                        <h2 class="showing-date">{{ showing[1] }}</h2>
+                        <form onsubmit='deleteShowing("{{ showing[0]}}")'>
+                            <button class="delete-showing-button" type="submit">DELETE SHOWING</button>
+                        </form>
+                    </div>
+                    <div class="inline showing-detail-text">
+                        <h3>Seats Allocated (Including Unavailable): </h3> <p>{{ 200-showing[2] }}/200</p>
+                    </div>
+                    
+                    <div class="inline showing-detail-text">
+                        <h3>Revenue: </h3> <p>{{ showing[3] }}</p>
+                    </div>
+
+                    <details class="attendees-details">
+                        <summary>Attendees</summary>
+
+                        {% for attendee in showing[4] %}
+                            <p>{{ attendee[1] }} {{ attendee[2] }} - {{ attendee[3] }}</p>
+                        {% endfor %}
+                    </details>
+
+                    <hr>
+                {% endfor %}
+
+            </details>
+        {% endfor %}
+        
+
+        <div id="flash-container"></div>
+    </body>
+</html>

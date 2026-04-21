@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Collyer's Theatre Booking - Admin Dashboard</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/common.css">
+        <link rel="stylesheet" type="text/css" href="static/css/admin-users.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico">
+
+        <script defer src="static/js/common.js"></script>
+        
+    </head>
+
+    <header> 
+            <nav id="navigation-bar">
+                <ul>
+                    <li><a href="./admin-dashboard" class="nav-button">Dashboard</a></li>
+                    <li><a href="./admin-users" class="nav-button current">Users</a></li>
+                </ul>
+            </nav>
+
+            <a id="logout" class="nav-button" href=".">ADMIN</a>
+    </header>
+
+    <body>
+        <div id="header-spacer"></div>
+        <h1 id="page-heading">Users:<hr></h1>
+
+        <form id="search" onsubmit="event.preventDefault()">
+            <input type="search" oninput="search()" id="search-field">
+        </form>
+        
+        <div id="users-section">
+            {% for user in users %}
+                <div class="user-card inline-split">
+                    <h4>{{ user[1] }} {{ user[2] }} - {{ user[3] }}</h4>
+
+                    <form class="inline user-type-form" id="update-{{ user[0] }}" onsubmit="updateUser('{{ user[0] }}')">
+                        <select name="user-type" class="visitor-new-type">
+                            {% if user[4] == "VISITOR" %}
+                                <option value="VISITOR" selected="selected">Visitor*</option>
+                            {% else %}
+                                <option value="VISITOR">Visitor</option>
+                            {% endif %}
+
+                            {% if user[4] == "SPECIAL" %}
+                                <option value="SPECIAL" selected="selected">Special*</option>
+                            {% else %}
+                                <option value="SPECIAL">Special</option>
+                            {% endif %}
+
+                            {% if user[4] == "ADMIN" %}
+                                <option value="ADMIN" selected="selected">Admin*</option>
+                            {% else %}
+                                <option value="ADMIN">Admin</option>
+                            {% endif %}
+
+                            <option value="DELETE" class="delete-user">DELETE</option>
+                        </select>
+
+                        <input type="submit" value="Submit" class="basic-button">
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="flash-container"></div>
+    </body>
+
+    <script defer src="static/js/admin-users.js"></script>
+</html>
