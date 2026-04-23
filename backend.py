@@ -909,6 +909,8 @@ class Backend:
 
             logging.debug(f"Deleting user {userID}...")
             cursor.execute("DELETE FROM dbo.Users WHERE userID =?", (userID))
+            cursor.execute("DELETE FROM dbo.BookingSeats WHERE BookingID IN (SELECT bookingID FROM dbo.Bookings WHERE userID = ?)", (userID))
+            cursor.execute("DELETE FROM dbo.Bookings WHERE userID =?", (userID))
 
     def delete_performance(self,performanceID) -> None:
         """
