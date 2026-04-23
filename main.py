@@ -48,6 +48,8 @@ def visitor_dashboard():
 def visitor_bookings():
     userID = flask.request.args.get("uid", default="None", type=int)
 
+    if userID == "None":
+        return redirect("/")
     return flask.render_template("visitor-my-bookings.html",
                                  userID = userID,
                                  userName = data.get_user_name(userID),
@@ -59,6 +61,8 @@ def performance_showings():
     userID = flask.request.args.get("uid", default="None", type=int)
     performanceID = flask.request.args.get("pid", default="None", type=int)
 
+    if userID == "None":
+        return redirect("/")
     return flask.render_template("visitor-select-showing.html",
                                  userID=userID,
                                  performanceID = performanceID,
@@ -76,6 +80,8 @@ def book_showing():
 
     logging.debug(f"{data.get_unavailable_seats(showingID) = }")
 
+    if userID == "None":
+        return redirect("/")
     return flask.render_template("visitor-book-showing.html",
                                  userID = userID,
                                  showingID = showingID,
@@ -94,6 +100,8 @@ def thank_you_page():
     performanceID = data.get_showing_performance(showingID)
     tickets = data.get_booking_ticket_type_distributions(bookingID)
 
+    if userID == "None":
+        return redirect("/")
     return flask.render_template("visitor-thank-you.html",
                                  userID = userID,
                                  bookingID = bookingID,
