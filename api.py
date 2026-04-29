@@ -6,7 +6,7 @@ from datetime import datetime
 
 # --------------------------- Initializations ---------------------------
 
-logging.basicConfig(level=logging.DEBUG, filename="api.log", filemode="w",
+logging.basicConfig(level=logging.DEBUG, filemode="w", filename="log.log",
                         format="%(asctime)s - %(levelname)s - %(message)s")
 
 api = Blueprint("api", __name__)

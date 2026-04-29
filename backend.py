@@ -8,6 +8,9 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.platypus import Spacer, Paragraph, Table, SimpleDocTemplate
 
+logging.basicConfig(level=logging.DEBUG, filemode="w", filename="log.log",
+                        format="%(asctime)s - %(levelname)s - %(message)s")
+
 class Backend:
     def __init__(self, database:str = "COLLEGE") -> None:
         self.database = database
@@ -18,7 +21,7 @@ class Backend:
         """
 
         if self.database == "PERSONAL":
-            logging.debug("Connecting to personal (local) database...")
+            logging.info("Connecting to personal (local) database...")
 
             cs = (
                     "Driver={ODBC Driver 18 for SQL Server};"
@@ -27,14 +30,14 @@ class Backend:
                     "Trusted_Connection=yes;"
                 )
         elif self.database == "COLLEGE":
-            logging.debug("Connecting to college database...")
+            logging.info("Connecting to college database...")
             logging.critical("College database has not yet been implemented!")
             raise Exception("College database has not yet been implemented.")
         else:
             logging.critical("Invalid database given.")
             raise Exception("Invalid database given.")
          
-        logging.debug("Connected to database")
+        logging.info("Connected to database")
 
         connection = pyodbc.connect(cs)
 
