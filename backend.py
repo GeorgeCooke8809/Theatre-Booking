@@ -37,7 +37,7 @@ class Backend:
                     "Server=svr-cmp-01;"
                     "Database=25CookeG899;"
                     "Trusted_Connection=yes;"
-                    "UID=COLLEYERS\\25CookeG899"
+                    "UID=COLLYERS\\25CookeG899"
                 )
         else:
             logging.critical("Invalid database given.")
