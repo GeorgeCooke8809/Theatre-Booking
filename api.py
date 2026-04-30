@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG, filemode="w", filename="log.log",
 api = Blueprint("api", __name__)
 
 global backend_connection
-backend_connection = Backend(database="COLLEGE")
+backend_connection = Backend(database="PERSONAL")
 
 # --------------------------- Admin Side ---------------------------
 
