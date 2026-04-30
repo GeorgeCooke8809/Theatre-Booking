@@ -31,8 +31,14 @@ class Backend:
                 )
         elif self.database == "COLLEGE":
             logging.info("Connecting to college database...")
-            logging.critical("College database has not yet been implemented!")
-            raise Exception("College database has not yet been implemented.")
+
+            cs = (
+                    "Driver={SQL Server};"
+                    "Server=svr-cmp-01;"
+                    "Database=25CookeG899;"
+                    "Trusted_Connection=yes;"
+                    "UID=COLLEYERS\\25CookeG899"
+                )
         else:
             logging.critical("Invalid database given.")
             raise Exception("Invalid database given.")
@@ -206,6 +212,9 @@ class Backend:
         if type(date_from) != datetime.date:
             logging.critical("Date_from given is not datetime.date")
             raise Exception("Date_from given is not datetime.date")
+        
+        if self.database == "COLLEGE":
+            date_from = date_from.strftime("%Y-%m-%d")
 
         with self._connection() as connection:
             cursor = connection.cursor()
@@ -242,7 +251,11 @@ class Backend:
 
             for showing in results:
                 showingID = showing[0]
-                showing_date = showing[1].strftime("%A %d %B, %Y")
+                if self.database == "COLLEGE":
+                    showing_date = datetime.datetime.strptime(showing[1], "%Y-%m-%d")
+                    showing_date = showing_date.strftime("%A %d %B, %Y")
+                else:
+                    showing_date = showing[1].strftime("%A %d %B, %Y")
                 showings.append((showingID, showing_date))
             
         return showings
@@ -517,6 +530,9 @@ class Backend:
         if type(date_from) != datetime.date:
             logging.critical("Date from given is not datetime.date")
             raise Exception("Date from given is not datetime.date")
+        
+        if self.database == "COLLEGE":
+            date_from = date_from.strftime("%Y-%m-%d")
 
         with self._connection() as connection:
             cursor = connection.cursor()
@@ -538,7 +554,11 @@ class Backend:
                 cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = (SELECT showingID FROM dbo.Bookings WHERE bookingID = ?)", (bookingID))
                 showing_date = cursor.fetchone()[0]
 
-                showing_date = showing_date.strftime("%A %d %B, %Y")
+                if self.database == "COLLEGE":
+                    showing_date = datetime.datetime.strptime(showing_date, "%Y-%m-%d")
+                    showing_date = showing_date.strftime("%A %d %B, %Y")
+                else:
+                    showing_date = showing_date.strftime("%A %d %B, %Y")
 
                 bookings.append((bookingID, performance_title, showing_date))
             
@@ -579,7 +599,11 @@ class Backend:
 
             cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = ?", (showingID))
             date = cursor.fetchone()[0]
-            date = date.strftime("%A %d %B, %Y")
+            if self.database == "COLLEGE":
+                date = datetime.datetime.strptime(date, "%Y-%m-%d")
+                date = date.strftime("%A %d %B, %Y")
+            else:
+                date = date.strftime("%A %d %B, %Y")
 
             logging.debug(f"{date = }")
 
@@ -794,7 +818,13 @@ class Backend:
             cursor.execute("SELECT showingDate FROM dbo.Showings WHERE showingID = ?", (showingID))
             showing_date = cursor.fetchone()[0]
 
-            return showing_date.strftime("%A %d %B, %Y")
+            if self.database == "COLLEGE":
+                showing_date = datetime.datetime.strptime(showing_date, "%Y-%m-%d")
+                showing_date = showing_date.strftime("%A %d %B, %Y")
+            else:
+                showing_date = showing_date.strftime("%A %d %B, %Y")
+
+            return showing_date
 
     def admin_get_showings(self, performanceID: int) -> list[tuple[int, str, int, list[str]]]:
         """
@@ -817,6 +847,8 @@ class Backend:
             for showing in showings_result:
                 showingID = showing[0]
                 showing_date = showing[1]
+                if self.database == "COLLEGE":
+                    showing_date = datetime.datetime.strptime(showing_date, "%Y-%m-%d")
                 showing_date = showing_date.strftime("%A %d %B, %Y") # this likely won't work on the college servers because of different SQL versions
                 remaining_seats = 200
 
@@ -1065,11 +1097,15 @@ class Backend:
                     logging.critical("Unknown seat type when getting distributions.")
                     raise ValueError("Unknown seat type when getting distributions.")
                 
+            logging.debug(f"{child = }, {adult = }, {elderly = }")
+
             performanceID = self.get_performanceID_from_showing(showingID)
             cursor.execute("SELECT childPrice, adultPrice, elderlyPrice FROM dbo.Performances WHERE performanceID = ?", (performanceID))
             prices = cursor.fetchone()
 
-            total = (child * prices[0]) + (adult * prices[1]) + (adult * prices[2])
+            logging.debug(f"Child Prices = {prices[0]}, Adult Prices = {prices[1]}, Elderly Prices = {prices[2]}")
+
+            total = (child * prices[0]) + (adult * prices[1]) + (elderly * prices[2])
 
         return f"£{total:.2f}"
 

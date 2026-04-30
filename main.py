@@ -13,7 +13,7 @@ app.register_blueprint(api, url_prefix="/api")
 app.secret_key = 'super secret'
 
 global data
-data = Backend(database="PERSONAL")
+data = Backend(database="COLLEGE")
 
 # --------------------------- Login Page ---------------------------
 
