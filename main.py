@@ -104,6 +104,7 @@ def thank_you_page():
         return redirect("/")
     return flask.render_template("visitor-thank-you.html",
                                  userID = userID,
+                                 userName = data.get_user_name(userID),
                                  bookingID = bookingID,
                                  no_tickets = tickets,
                                  performance_name = data.get_performance_name(performanceID),

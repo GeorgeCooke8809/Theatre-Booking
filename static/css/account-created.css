@@ -5,6 +5,12 @@
     padding: 10px;
     margin: 0px;
 }
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
 #border{
     width: 600px;

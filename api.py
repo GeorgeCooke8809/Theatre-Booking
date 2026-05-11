@@ -4,13 +4,17 @@ from backend import Backend
 import logging
 from datetime import datetime
 
-logging.basicConfig(level=logging.DEBUG, filename="api.log", filemode="w",
+# --------------------------- Initializations ---------------------------
+
+logging.basicConfig(level=logging.DEBUG, filemode="w", filename="log.log",
                         format="%(asctime)s - %(levelname)s - %(message)s")
 
 api = Blueprint("api", __name__)
 
 global backend_connection
 backend_connection = Backend(database="PERSONAL")
+
+# --------------------------- Admin Side ---------------------------
 
 @api.route("/check-login-details", methods = ["POST"])
 def check_login_details():
@@ -201,6 +205,85 @@ def add_showing():
             "message": "Something went wrong."
         })
 
+@api.route("/delete-showing", methods = ["POST"])
+def delete_showing():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        backend_connection.delete_showing(request_dict["showingID"])
+
+        return jsonify({
+            "code": 200
+        })
+    
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })
+    
+@api.route("/update-user-type", methods = ["POST"])
+def update_user_type():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    if backend_connection._check_user_exists(request_dict["userID"]) == False:
+        return jsonify({
+            "code": 401,
+            "message": "User does not exist."
+        })
+
+    if request_dict["newType"] == "DELETE":
+        try:
+            backend_connection.delete_user(request_dict["userID"])
+
+            return jsonify({
+                "code": 200,
+            })
+        except:
+            return jsonify({
+                "code": 500,
+                "message": "Could not delete user."
+            })
+    elif request_dict["newType"] in ["VISITOR", "SPECIAL", "ADMIN"]:
+        try: 
+            backend_connection.change_user_type(request_dict["userID"], request_dict["newType"])
+
+            return jsonify({
+                "code": 200,
+            })
+        except:
+            return jsonify({
+                "code": 500,
+                "message": "Could not update user type."
+            })
+    else:
+        return jsonify({
+            "code": 401,
+            "message": "Invalid user type."
+        })
+    
+@api.route("/search-users", methods = ["POST"])
+def search_users():
+    request_dict = request.get_json()
+    logging.debug(request_dict)
+
+    try:
+        results = backend_connection.search_user(request_dict["term"])
+
+        return jsonify({
+            "code": 200,
+            "elements": results
+        })
+    except:
+        return jsonify({
+            "code": 500,
+            "message": "Something went wrong."
+        })
+    
+# --------------------------- Visitor Side ---------------------------
+
 @api.route("/book-showing", methods = ["POST"])
 def book_showing():
     logging.debug("Book showing triggered")
@@ -321,80 +404,3 @@ def print_booking():
     backend_connection.generate_pdf(bookingID)
 
     return flask.send_file("Ticket.pdf", "application/pdf", as_attachment=True, download_name="Ticket.pdf")
-
-@api.route("/delete-showing", methods = ["POST"])
-def delete_showing():
-    request_dict = request.get_json()
-    logging.debug(request_dict)
-
-    try:
-        backend_connection.delete_showing(request_dict["showingID"])
-
-        return jsonify({
-            "code": 200
-        })
-    
-    except:
-        return jsonify({
-            "code": 500,
-            "message": "Something went wrong."
-        })
-    
-@api.route("/update-user-type", methods = ["POST"])
-def update_user_type():
-    request_dict = request.get_json()
-    logging.debug(request_dict)
-
-    if backend_connection._check_user_exists(request_dict["userID"]) == False:
-        return jsonify({
-            "code": 401,
-            "message": "User does not exist."
-        })
-
-    if request_dict["newType"] == "DELETE":
-        try:
-            backend_connection.delete_user(request_dict["userID"])
-
-            return jsonify({
-                "code": 200,
-            })
-        except:
-            return jsonify({
-                "code": 500,
-                "message": "Could not delete user."
-            })
-    elif request_dict["newType"] in ["VISITOR", "SPECIAL", "ADMIN"]:
-        try: 
-            backend_connection.change_user_type(request_dict["userID"], request_dict["newType"])
-
-            return jsonify({
-                "code": 200,
-            })
-        except:
-            return jsonify({
-                "code": 500,
-                "message": "Could not update user type."
-            })
-    else:
-        return jsonify({
-            "code": 401,
-            "message": "Invalid user type."
-        })
-    
-@api.route("/search-users", methods = ["POST"])
-def search_users():
-    request_dict = request.get_json()
-    logging.debug(request_dict)
-
-    try:
-        results = backend_connection.search_user(request_dict["term"])
-
-        return jsonify({
-            "code": 200,
-            "elements": results
-        })
-    except:
-        return jsonify({
-            "code": 500,
-            "message": "Something went wrong."
-        })
