@@ -1,3 +1,4 @@
+# George Cooke Transfer Project
 from backend import Backend
 import logging
 import flask
