@@ -1,3 +1,4 @@
+#George Cooke Transfer Project
 from flask import Blueprint, jsonify, request, flash
 import flask
 from backend import Backend
@@ -12,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, filemode="w", filename="log.log",
 api = Blueprint("api", __name__)
 
 global backend_connection
-backend_connection = Backend(database="PERSONAL")
+backend_connection = Backend(database="COLLEGE") # Set to "COLLEGE" if on college database, set to "PERSONAL" if on laptop
 
 # --------------------------- Admin Side ---------------------------
 
